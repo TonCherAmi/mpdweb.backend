@@ -11,17 +11,16 @@ class PlaybackController(private val playerService: PlayerService) {
 
     @PostMapping("/toggle")
     fun toggle(): Boolean {
-        return false
-    }
+        playerService.togglePlayback()
 
-    @PostMapping("/play")
-    fun play(): Boolean {
-        return false
+        return true
     }
 
     @PostMapping("/stop")
     fun stop(): Boolean {
-        return false
+        playerService.stopPlayback()
+
+        return true
     }
 
 }

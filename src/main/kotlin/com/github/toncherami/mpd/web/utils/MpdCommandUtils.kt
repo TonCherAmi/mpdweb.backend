@@ -2,10 +2,20 @@ package com.github.toncherami.mpd.web.utils
 
 import java.lang.IllegalStateException
 
-enum class MpdCommand(val code: String) {
+enum class MpdCommand(val value: String) {
 
+    PLAY("play"),
+    STOP("stop"),
+    PAUSE("pause"),
     STATUS("status"),
     PLAYLISTINFO("playlistinfo");
+
+}
+
+enum class MpdBoolean(val value: String) {
+
+    TRUE("1"),
+    FALSE("0")
 
 }
 
@@ -23,10 +33,12 @@ class MpdCommandBuilder {
     }
 
     fun build(): String {
-        val commandCode = command?.code
+        val commandCode = command?.value
             ?: throw IllegalStateException("MPD command must be specified before calling build")
 
-        return commandCode + " " + arguments.joinToString(" ")
+        return "$commandCode " + arguments.joinToString(" ") {
+            "\"$it\""
+        }
     }
 
 }
