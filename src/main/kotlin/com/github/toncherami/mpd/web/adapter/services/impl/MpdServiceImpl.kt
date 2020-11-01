@@ -62,4 +62,8 @@ class MpdServiceImpl(
         return mpdRequestHandler.performListRequest(MpdCommand.PLAYLISTINFO)
     }
 
+    override fun update() {
+        mpdRequestHandler.performRequest<Unit>(MpdCommand.UPDATE)
+    }
+
 }

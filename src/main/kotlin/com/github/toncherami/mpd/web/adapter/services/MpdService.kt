@@ -15,5 +15,6 @@ interface MpdService {
     fun status(): MpdStatus
     fun playlistinfo(): List<MpdPlaylistItem>
     fun clear()
+    fun update()
 
 }
