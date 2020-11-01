@@ -22,4 +22,12 @@ class PlaybackServiceImpl(private val mpdService: MpdService) : PlaybackService 
         mpdService.play()
     }
 
+    override fun next() {
+        mpdService.next()
+    }
+
+    override fun prev() {
+        mpdService.previous()
+    }
+
 }

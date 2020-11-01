@@ -9,6 +9,8 @@ enum class MpdCommand(val value: String) {
     PLAY("play"),
     STOP("stop"),
     PAUSE("pause"),
+    NEXT("next"),
+    PREVIOUS("previous"),
     STATUS("status"),
     PASSWORD("password"),
     PLAYLISTINFO("playlistinfo");

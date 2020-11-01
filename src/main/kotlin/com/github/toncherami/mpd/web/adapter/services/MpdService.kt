@@ -10,6 +10,8 @@ interface MpdService {
     fun play()
     fun stop()
     fun pause()
+    fun next()
+    fun previous()
     fun status(): MpdStatus
     fun playlistinfo(): List<MpdPlaylistItem>
     fun clear()

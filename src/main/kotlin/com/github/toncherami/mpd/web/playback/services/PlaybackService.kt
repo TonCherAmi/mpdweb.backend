@@ -4,5 +4,7 @@ interface PlaybackService {
 
     fun stop()
     fun toggle()
+    fun next()
+    fun prev()
 
 }

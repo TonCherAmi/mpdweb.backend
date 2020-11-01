@@ -19,4 +19,14 @@ class PlaybackController(private val playbackService: PlaybackService) {
         playbackService.toggle()
     }
 
+    @PostMapping("/next")
+    fun next() {
+        playbackService.next()
+    }
+
+    @PostMapping("/prev")
+    fun prev() {
+        playbackService.prev()
+    }
+
 }

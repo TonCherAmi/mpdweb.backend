@@ -42,6 +42,14 @@ class MpdServiceImpl(
         }
     }
 
+    override fun next() {
+        mpdRequestHandler.performRequest<Unit>(MpdCommand.NEXT)
+    }
+
+    override fun previous() {
+        mpdRequestHandler.performRequest<Unit>(MpdCommand.PREVIOUS)
+    }
+
     override fun clear() {
         mpdRequestHandler.performRequest<Unit>(MpdCommand.CLEAR)
     }
