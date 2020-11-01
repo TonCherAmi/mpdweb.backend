@@ -15,7 +15,8 @@ enum class MpdCommand(val value: String) {
     PASSWORD("password"),
     PLAYLISTINFO("playlistinfo"),
     CLEAR("clear"),
-    UPDATE("update");
+    UPDATE("update"),
+    LSINFO("lsinfo");
 
 }
 

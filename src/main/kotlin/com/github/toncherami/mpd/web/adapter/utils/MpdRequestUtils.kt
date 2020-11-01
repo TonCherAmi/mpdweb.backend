@@ -26,19 +26,20 @@ class MpdRequestHandler(val tcpGateway: TcpGateway, val objectMapper: ObjectMapp
 
     inline fun <reified T> performListRequest(
         mpdCommand: MpdCommand,
+        keys: List<String>,
         action: MpdCommandBuilder.() -> Unit = { }
     ): List<T> {
         return MpdCommandBuilder()
             .command(mpdCommand)
             .apply(action)
             .build()
-            .let(::performListRequest)
+            .let { performListRequest(it, keys) }
     }
 
-    inline fun <reified T> performListRequest(message: String): List<T> {
+    inline fun <reified T> performListRequest(message: String, keys: List<String>): List<T> {
         return tcpGateway
             .send(message)
-            .let(::parseListResponse)
+            .let { parseListResponse(it, keys) }
             .also(this::validateResponseStatus)
             .let(MpdResponse<List<Map<String, String>>>::data)
             .map { objectMapper.convertValue(it, T::class.java) }

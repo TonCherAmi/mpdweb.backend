@@ -60,7 +60,7 @@ class MpdHandshakeInterceptor(
     }
 
     private fun handleHandshakeFailure() {
-        throw MessagingException("handshake failure")
+        throw MessagingException("Handshake failure")
     }
 
     private fun handleHandshakeSuccess() {
@@ -83,7 +83,7 @@ class MpdHandshakeInterceptor(
                 }
 
                 if (!isHandshakeComplete) {
-                    throw MessagingException("unexpected handshake error")
+                    throw MessagingException("Unexpected handshake error")
                 }
             }
 
@@ -137,7 +137,7 @@ class MpdHandshakeInterceptor(
     private fun Message<*>.isValidHandshakeResponse(): Boolean {
         val payload = (payload as? String)
             ?.trim()
-            ?: throw IllegalArgumentException("unable to cast payload to string")
+            ?: throw IllegalArgumentException("Unable to cast payload to string")
 
         return payload.lines()
             .takeIf { it.count() == 2 }

@@ -1,10 +1,10 @@
 package com.github.toncherami.mpd.web.playlist.services
 
-import com.github.toncherami.mpd.web.playlist.dto.PlaylistItem
+import com.github.toncherami.mpd.web.database.dto.File
 
 interface PlaylistService {
 
-    fun get(): List<PlaylistItem>
+    fun get(): List<File>
     fun clear()
 
 }

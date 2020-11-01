@@ -1,11 +1,12 @@
 package com.github.toncherami.mpd.web.adapter.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 
-data class MpdPlaylistItem(
-    @JsonProperty("Id")
-    val id: String,
+data class MpdFile(
     val file: String,
+    @JsonProperty("Id")
+    val id: String?,
     @JsonProperty("Pos")
     val position: Int,
     val duration: Double,
@@ -13,4 +14,4 @@ data class MpdPlaylistItem(
     val title: String?,
     @JsonProperty("Artist")
     val artist: String?
-)
+) : MpdDatabaseItem()

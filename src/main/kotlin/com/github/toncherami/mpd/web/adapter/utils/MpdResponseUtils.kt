@@ -22,15 +22,13 @@ fun parseResponse(response: String): MpdResponse<Map<String, String>> {
         .let(unwrappedResponse::replaceData)
 }
 
-fun parseListResponse(response: String): MpdResponse<List<Map<String, String>>> {
+fun parseListResponse(response: String, keys: List<String>): MpdResponse<List<Map<String, String>>> {
     val unwrappedResponse = parseResponseWrapper(response)
 
     val data = unwrappedResponse.data
         ?: return unwrappedResponse.replaceData(emptyList())
 
-    val initialItemKey = getInitialListItemKey(data)
-
-    val lookahead = "(?=$initialItemKey$MPD_RESPONSE_KEY_VALUE_SEPARATOR)".toRegex()
+    val lookahead = getLookahead(keys)
 
     return data
         .split(lookahead)
@@ -40,12 +38,17 @@ fun parseListResponse(response: String): MpdResponse<List<Map<String, String>>> 
         .let(unwrappedResponse::replaceData)
 }
 
-private fun getInitialListItemKey(data: String): String {
-    return "^([a-zA-Z-]+)$MPD_RESPONSE_KEY_VALUE_SEPARATOR".toRegex()
-        .find(data)
-        ?.groupValues
-        ?.get(1)
-        ?: throw IllegalArgumentException("Unable to parse initial list item key")
+private fun getLookahead(keys: List<String>): Regex {
+    if (keys.isEmpty()) {
+        throw java.lang.IllegalArgumentException("Key list cannot be empty")
+    }
+
+    val condition = keys
+        .takeUnless { it.count() == 1 }
+        ?.joinToString("$MPD_RESPONSE_KEY_VALUE_SEPARATOR|")
+        ?: keys.first().plus(MPD_RESPONSE_KEY_VALUE_SEPARATOR)
+
+    return "(?=$condition)".toRegex()
 }
 
 private fun parseResponseWrapper(response: String): MpdResponse<String?> {

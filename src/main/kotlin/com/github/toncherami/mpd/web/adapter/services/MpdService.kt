@@ -1,7 +1,8 @@
 package com.github.toncherami.mpd.web.adapter.services
 
 import com.github.toncherami.mpd.web.adapter.dto.MpdChange
-import com.github.toncherami.mpd.web.adapter.dto.MpdPlaylistItem
+import com.github.toncherami.mpd.web.adapter.dto.MpdDatabaseItem
+import com.github.toncherami.mpd.web.adapter.dto.MpdFile
 import com.github.toncherami.mpd.web.adapter.dto.MpdStatus
 
 interface MpdService {
@@ -13,8 +14,9 @@ interface MpdService {
     fun next()
     fun previous()
     fun status(): MpdStatus
-    fun playlistinfo(): List<MpdPlaylistItem>
+    fun playlistinfo(): List<MpdFile>
     fun clear()
     fun update()
+    fun lsinfo(uri: String): List<MpdDatabaseItem>
 
 }

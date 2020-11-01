@@ -2,7 +2,8 @@ package com.github.toncherami.mpd.web.adapter.services.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.toncherami.mpd.web.adapter.dto.MpdChange
-import com.github.toncherami.mpd.web.adapter.dto.MpdPlaylistItem
+import com.github.toncherami.mpd.web.adapter.dto.MpdDatabaseItem
+import com.github.toncherami.mpd.web.adapter.dto.MpdFile
 import com.github.toncherami.mpd.web.adapter.dto.MpdStatus
 import com.github.toncherami.mpd.web.adapter.gateways.MpdNoTimeoutTcpGateway
 import com.github.toncherami.mpd.web.adapter.gateways.MpdTcpGateway
@@ -25,7 +26,7 @@ class MpdServiceImpl(
     private val mpdNoTimeoutRequestHandler = MpdRequestHandler(mpdNoTimeoutTcpClient, objectMapper)
 
     override fun idle(): List<MpdChange> {
-        return mpdNoTimeoutRequestHandler.performListRequest(MpdCommand.IDLE)
+        return mpdNoTimeoutRequestHandler.performListRequest(MpdCommand.IDLE, listOf("changed"))
     }
 
     override fun play() {
@@ -58,12 +59,19 @@ class MpdServiceImpl(
         return mpdRequestHandler.performRequest(MpdCommand.STATUS)
     }
 
-    override fun playlistinfo(): List<MpdPlaylistItem> {
-        return mpdRequestHandler.performListRequest(MpdCommand.PLAYLISTINFO)
+    override fun playlistinfo(): List<MpdFile> {
+        return mpdRequestHandler.performListRequest(MpdCommand.PLAYLISTINFO, listOf("file"))
     }
 
     override fun update() {
         mpdRequestHandler.performRequest<Unit>(MpdCommand.UPDATE)
+    }
+
+    override fun lsinfo(uri: String): List<MpdDatabaseItem> {
+        return mpdRequestHandler.performListRequest(
+            MpdCommand.LSINFO,
+            listOf("file", "playlist", "directory")
+        ) { argument(uri) }
     }
 
 }
