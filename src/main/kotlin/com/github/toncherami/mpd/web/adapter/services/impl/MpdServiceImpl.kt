@@ -42,6 +42,10 @@ class MpdServiceImpl(
         }
     }
 
+    override fun clear() {
+        mpdRequestHandler.performRequest<Unit>(MpdCommand.CLEAR)
+    }
+
     override fun status(): MpdStatus {
         return mpdRequestHandler.performRequest(MpdCommand.STATUS)
     }

@@ -15,6 +15,10 @@ class PlaylistServiceImpl(private val mpdService: MpdService) : PlaylistService 
         return mpdService.playlistinfo().map(MpdPlaylistItem::toDto)
     }
 
+    override fun clear() {
+        return mpdService.clear()
+    }
+
 }
 
 private fun MpdPlaylistItem.toDto() = PlaylistItem(
