@@ -43,6 +43,10 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
+tasks.bootJar {
+    archiveFileName.set("mpdweb.jar")
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
 }
