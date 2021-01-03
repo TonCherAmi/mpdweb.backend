@@ -74,4 +74,10 @@ class MpdServiceImpl(
         ) { argument(uri) }
     }
 
+    override fun add(uri: String) {
+        mpdRequestHandler.performRequest<Unit>(MpdCommand.ADD) {
+            argument(uri)
+        }
+    }
+
 }

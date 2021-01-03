@@ -12,6 +12,10 @@ class PlaylistServiceImpl(private val mpdService: MpdService) : PlaylistService 
         return mpdService.playlistinfo().map(File::of)
     }
 
+    override fun add(uri: String) {
+        return mpdService.add(uri)
+    }
+
     override fun clear() {
         return mpdService.clear()
     }

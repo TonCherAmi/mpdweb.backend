@@ -4,6 +4,7 @@ import java.lang.IllegalStateException
 
 enum class MpdCommand(val value: String) {
 
+    ADD("add"),
     IDLE("idle"),
     PING("ping"),
     PLAY("play"),

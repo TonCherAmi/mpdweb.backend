@@ -18,5 +18,6 @@ interface MpdService {
     fun clear()
     fun update()
     fun lsinfo(uri: String): List<MpdDatabaseItem>
+    fun add(uri: String)
 
 }
