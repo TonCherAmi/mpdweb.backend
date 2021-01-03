@@ -7,7 +7,7 @@ import com.github.toncherami.mpd.web.adapter.dto.MpdPlaylist
 import com.github.toncherami.mpd.web.database.dto.enums.DatabaseItemType
 import java.lang.IllegalArgumentException
 
-abstract class DatabaseItem(val type: DatabaseItemType) {
+abstract class DatabaseItem(val uri: String, val type: DatabaseItemType) {
 
     companion object {
         fun of(mpdDatabaseItem: MpdDatabaseItem): DatabaseItem {
