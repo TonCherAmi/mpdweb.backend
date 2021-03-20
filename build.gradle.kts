@@ -14,12 +14,14 @@ ext["jackson.version"] = "2.12.0-rc1"
 
 group = "com.github.toncherami.mpd"
 version = "0.0.1-SNAPSHOT"
+
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://repo.spring.io/milestone") }
+
     maven { url = uri("https://repo.spring.io/snapshot") }
+    maven { url = uri("https://repo.spring.io/milestone") }
 }
 
 dependencies {
