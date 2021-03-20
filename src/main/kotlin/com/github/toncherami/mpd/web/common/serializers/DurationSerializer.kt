@@ -10,10 +10,23 @@ class DurationSerializer(klass: Class<Duration>? = null) : StdSerializer<Duratio
     override fun serialize(value: Duration, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeStartObject()
 
-        gen.writeNumberField("hours", value.toHoursPart())
+        gen.writeFieldName("part")
+        gen.writeStartObject()
+
+        gen.writeNumberField("hours", value.toHours())
         gen.writeNumberField("minutes", value.toMinutesPart())
         gen.writeNumberField("seconds", value.toSecondsPart())
-        gen.writeNumberField("secondsTotal", value.toSeconds())
+
+        gen.writeEndObject()
+
+        gen.writeFieldName("total")
+        gen.writeStartObject()
+
+        gen.writeNumberField("hours", value.toHours())
+        gen.writeNumberField("minutes", value.toMinutes())
+        gen.writeNumberField("seconds", value.toSeconds())
+
+        gen.writeEndObject()
 
         gen.writeEndObject()
     }
