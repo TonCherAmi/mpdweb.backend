@@ -1,6 +1,6 @@
 package com.github.toncherami.mpd.web.playlist.controllers
 
-import com.github.toncherami.mpd.web.database.dto.File
+import com.github.toncherami.mpd.web.database.dto.DatabaseFile
 import com.github.toncherami.mpd.web.playlist.dto.api.request.PlaylistAddBody
 import com.github.toncherami.mpd.web.playlist.services.PlaylistService
 import org.springframework.web.bind.annotation.GetMapping
@@ -14,15 +14,12 @@ import org.springframework.web.bind.annotation.RestController
 class PlaylistController(private val playlistService: PlaylistService) {
 
     @GetMapping
-    fun playlist(): List<File> {
+    fun playlist(): List<DatabaseFile> {
         return playlistService.get()
     }
 
     @PostMapping("/add")
-    fun add(
-        @RequestBody
-        body: PlaylistAddBody
-    ) {
+    fun add(@RequestBody body: PlaylistAddBody) {
         playlistService.add(body.uri)
     }
 

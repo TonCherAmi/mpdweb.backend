@@ -8,7 +8,7 @@ import com.github.toncherami.mpd.web.database.dto.enums.DatabaseItemType
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
-class File(
+class DatabaseFile(
     uri: String,
     val id: String?,
     val position: Int,
@@ -19,9 +19,9 @@ class File(
 ) : DatabaseItem(uri, DatabaseItemType.FILE) {
 
     companion object {
-        fun of(mpdFile: MpdFile): File {
+        fun of(mpdFile: MpdFile): DatabaseFile {
             return mpdFile.let {
-                File(
+                DatabaseFile(
                     uri = it.file,
                     id = it.id,
                     position = it.position,
