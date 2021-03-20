@@ -2,6 +2,7 @@ package com.github.toncherami.mpd.web.adapter.services.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.toncherami.mpd.web.adapter.dto.MpdChange
+import com.github.toncherami.mpd.web.adapter.dto.MpdCount
 import com.github.toncherami.mpd.web.adapter.dto.MpdDatabaseItem
 import com.github.toncherami.mpd.web.adapter.dto.MpdFile
 import com.github.toncherami.mpd.web.adapter.dto.MpdStatus
@@ -77,6 +78,12 @@ class MpdServiceImpl(
     override fun add(uri: String) {
         mpdRequestHandler.performRequest<Unit>(MpdCommand.ADD) {
             argument(uri)
+        }
+    }
+
+    override fun count(vararg filter: String): MpdCount {
+        return mpdRequestHandler.performRequest(MpdCommand.COUNT) {
+            filter.forEach(::argument)
         }
     }
 

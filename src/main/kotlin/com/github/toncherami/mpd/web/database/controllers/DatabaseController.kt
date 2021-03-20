@@ -1,5 +1,6 @@
 package com.github.toncherami.mpd.web.database.controllers
 
+import com.github.toncherami.mpd.web.database.dto.DatabaseCount
 import com.github.toncherami.mpd.web.database.dto.DatabaseItem
 import com.github.toncherami.mpd.web.database.services.DatabaseService
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,6 +16,11 @@ class DatabaseController(private val databaseService: DatabaseService) {
     @GetMapping
     fun database(@RequestParam uri: String): List<DatabaseItem> {
         return databaseService.get(uri)
+    }
+
+    @GetMapping("/count")
+    fun count(@RequestParam uri: String): DatabaseCount {
+        return databaseService.count(uri)
     }
 
     @PostMapping("/update")
