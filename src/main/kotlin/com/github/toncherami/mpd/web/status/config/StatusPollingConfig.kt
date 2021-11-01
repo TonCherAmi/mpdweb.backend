@@ -4,11 +4,9 @@ import com.github.toncherami.mpd.web.status.properties.StatusPollingProperties
 import com.github.toncherami.mpd.web.status.services.StatusService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.integration.core.MessageSource
 import org.springframework.integration.dsl.IntegrationFlow
 import org.springframework.integration.dsl.IntegrationFlows
-import org.springframework.integration.endpoint.MethodInvokingMessageSource
-import kotlin.reflect.jvm.javaMethod
+import java.util.function.Supplier
 
 const val STATUS_POLLING_CHANNEL_ID = "statusPollingChannel"
 const val STATUS_POLLING_INTEGRATION_FLOW_ID = "statusIntegrationFlow"
@@ -18,8 +16,9 @@ class StatusPollingConfig(private val statusPollingProperties: StatusPollingProp
 
     @Bean(STATUS_POLLING_INTEGRATION_FLOW_ID)
     fun statusIntegrationFlow(statusService: StatusService): IntegrationFlow {
-        return IntegrationFlows
-            .from(getStatusSource(statusService)) { spec ->
+        val supplier = Supplier(statusService::get)
+
+        return IntegrationFlows.fromSupplier(supplier) { spec ->
                 spec.autoStartup(false)
                 spec.poller {
                     it.fixedDelay(statusPollingProperties.interval)
@@ -28,13 +27,5 @@ class StatusPollingConfig(private val statusPollingProperties: StatusPollingProp
             .channel(STATUS_POLLING_CHANNEL_ID)
             .get()
     }
-
-    private fun getStatusSource(statusService: StatusService): MessageSource<*> {
-        return MethodInvokingMessageSource().also {
-            it.setObject(statusService)
-            it.setMethod(StatusService::get.javaMethod)
-        }
-    }
-
 
 }
