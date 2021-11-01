@@ -23,6 +23,11 @@ class DatabaseController(private val databaseService: DatabaseService) {
         return databaseService.count(uri)
     }
 
+    @GetMapping("/search")
+    fun search(@RequestParam term: String): List<DatabaseItem> {
+        return databaseService.search(term)
+    }
+
     @PostMapping("/update")
     fun update() {
         databaseService.update()

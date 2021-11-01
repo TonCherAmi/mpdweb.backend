@@ -1,11 +1,17 @@
 package com.github.toncherami.mpd.web.database.services.impl
 
+import com.github.toncherami.mpd.web.adapter.dto.MpdDatabaseItem
+import com.github.toncherami.mpd.web.adapter.dto.MpdRegexFileFilter
 import com.github.toncherami.mpd.web.adapter.services.MpdService
 import com.github.toncherami.mpd.web.database.dto.DatabaseCount
+import com.github.toncherami.mpd.web.database.dto.DatabaseDirectory
 import com.github.toncherami.mpd.web.database.dto.DatabaseItem
 import com.github.toncherami.mpd.web.database.dto.enums.DatabaseItemType
 import com.github.toncherami.mpd.web.database.services.DatabaseService
 import org.springframework.stereotype.Service
+import java.io.File
+import java.lang.IllegalArgumentException
+import java.nio.file.Path
 
 @Service
 class DatabaseServiceImpl(private val mpdService: MpdService) : DatabaseService {
@@ -24,5 +30,55 @@ class DatabaseServiceImpl(private val mpdService: MpdService) : DatabaseService 
         return mpdService.count("base", uri)
             .let(DatabaseCount::of)
     }
+
+    override fun search(term: String): List<DatabaseItem> {
+        val files = mpdService.search(
+            MpdRegexFileFilter(regex = term)
+        )
+
+        val regex = makeSearchTermRegex(term)
+
+        return files.flatMap { mpdDatabaseItem ->
+            val databaseItem = DatabaseItem.of(mpdDatabaseItem)
+
+            getUriMatches(databaseItem, regex)
+        }.distinctBy(DatabaseItem::uri)
+    }
+
+    private fun makeSearchTermRegex(term: String): Regex {
+        return Regex(
+            pattern = ".*$term.*",
+            option = RegexOption.IGNORE_CASE,
+        )
+    }
+
+    private fun getUriMatches(databaseItem: DatabaseItem, regex: Regex): List<DatabaseItem> {
+        if (databaseItem.type != DatabaseItemType.FILE) {
+            throw IllegalArgumentException("expected a file")
+        }
+
+        val pathSegments = databaseItem.uri.split(MpdDatabaseItem.PATH_SEPARATOR)
+            .filter(String::isNotBlank)
+
+        return pathSegments.mapIndexedNotNull { index, entry ->
+            when {
+                !entry.matches(regex) -> {
+                    null
+                }
+
+                index == pathSegments.lastIndex -> {
+                    databaseItem
+                }
+
+                else -> {
+                    val uri = pathSegments.take(index.inc())
+                        .joinToString(MpdDatabaseItem.PATH_SEPARATOR)
+
+                    DatabaseDirectory(uri)
+                }
+            }
+        }
+    }
+
 
 }

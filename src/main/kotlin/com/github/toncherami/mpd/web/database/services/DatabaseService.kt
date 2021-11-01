@@ -8,5 +8,6 @@ interface DatabaseService {
     fun update()
     fun get(uri: String): List<DatabaseItem>
     fun count(uri: String): DatabaseCount
+    fun search(term: String): List<DatabaseItem>
 
 }

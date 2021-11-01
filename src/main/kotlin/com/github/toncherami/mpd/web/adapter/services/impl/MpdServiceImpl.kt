@@ -5,6 +5,7 @@ import com.github.toncherami.mpd.web.adapter.dto.MpdChange
 import com.github.toncherami.mpd.web.adapter.dto.MpdCount
 import com.github.toncherami.mpd.web.adapter.dto.MpdDatabaseItem
 import com.github.toncherami.mpd.web.adapter.dto.MpdFile
+import com.github.toncherami.mpd.web.adapter.dto.MpdRegexFileFilter
 import com.github.toncherami.mpd.web.adapter.dto.MpdStatus
 import com.github.toncherami.mpd.web.adapter.gateways.MpdNoTimeoutTcpGateway
 import com.github.toncherami.mpd.web.adapter.gateways.MpdTcpGateway
@@ -85,6 +86,23 @@ class MpdServiceImpl(
         return mpdRequestHandler.performRequest(MpdCommand.COUNT) {
             filter.forEach(::argument)
         }
+    }
+
+    override fun search(mpdRegexFileFilter: MpdRegexFileFilter): List<MpdDatabaseItem> {
+        val escapedRegex = escapeArgument(mpdRegexFileFilter.regex)
+
+        return mpdRequestHandler.performListRequest(MpdCommand.SEARCH, listOf("file")) {
+            argument(
+                "(file =~ '$escapedRegex')"
+            )
+        }
+    }
+
+    // TODO: this is not really sufficient
+    private fun escapeArgument(argument: String): String {
+        return argument
+            .replace("'", """\\'""")
+            .replace(""""""", """\\\"""")
     }
 
 }

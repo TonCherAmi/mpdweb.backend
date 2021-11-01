@@ -18,7 +18,8 @@ enum class MpdCommand(val value: String) {
     CLEAR("clear"),
     UPDATE("update"),
     LSINFO("lsinfo"),
-    COUNT("count");
+    COUNT("count"),
+    SEARCH("search");
 
 }
 

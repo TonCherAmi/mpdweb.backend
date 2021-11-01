@@ -9,4 +9,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(MpdDirectory::class)
 )
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
-abstract class MpdDatabaseItem
+abstract class MpdDatabaseItem {
+
+    companion object {
+
+        const val PATH_SEPARATOR = "/"
+
+    }
+
+}
