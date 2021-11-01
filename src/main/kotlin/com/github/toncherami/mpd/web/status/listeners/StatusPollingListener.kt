@@ -13,8 +13,6 @@ class StatusPollingListener(
     private val webSocketConnectionCountService: WebSocketConnectionCountService
 ) {
 
-    private var connectionCount = 0
-
     @EventListener(SessionConnectedEvent::class)
     fun handleConnectedEvent() {
         if (webSocketConnectionCountService.get() == 1) {
