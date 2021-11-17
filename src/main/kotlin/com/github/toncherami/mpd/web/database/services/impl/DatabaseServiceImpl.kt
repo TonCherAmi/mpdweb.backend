@@ -42,7 +42,13 @@ class DatabaseServiceImpl(private val mpdService: MpdService) : DatabaseService 
             val databaseItem = DatabaseItem.of(mpdDatabaseItem)
 
             getUriMatches(databaseItem, regex)
-        }.distinctBy(DatabaseItem::uri)
+        }.distinctBy(DatabaseItem::uri).sortedWith { a, b ->
+            when {
+                a.type == DatabaseItemType.DIRECTORY && b.type == DatabaseItemType.FILE -> -1
+                a.type == DatabaseItemType.FILE && b.type == DatabaseItemType.DIRECTORY -> 1
+                else -> compareValues(a.uri, b.uri)
+            }
+        }
     }
 
     private fun makeSearchTermRegex(term: String): Regex {
