@@ -40,7 +40,7 @@ fun parseListResponse(response: String, keys: List<String>): MpdResponse<List<Ma
 
 private fun getLookahead(keys: List<String>): Regex {
     if (keys.isEmpty()) {
-        throw java.lang.IllegalArgumentException("Key list cannot be empty")
+        throw IllegalArgumentException("Key list cannot be empty")
     }
 
     val condition = keys

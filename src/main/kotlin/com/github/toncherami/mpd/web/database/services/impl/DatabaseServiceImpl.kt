@@ -9,9 +9,7 @@ import com.github.toncherami.mpd.web.database.dto.DatabaseItem
 import com.github.toncherami.mpd.web.database.dto.enums.DatabaseItemType
 import com.github.toncherami.mpd.web.database.services.DatabaseService
 import org.springframework.stereotype.Service
-import java.io.File
 import java.lang.IllegalArgumentException
-import java.nio.file.Path
 
 @Service
 class DatabaseServiceImpl(private val mpdService: MpdService) : DatabaseService {
