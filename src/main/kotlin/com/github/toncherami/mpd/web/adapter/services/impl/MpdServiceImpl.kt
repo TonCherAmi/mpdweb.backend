@@ -99,6 +99,32 @@ class MpdServiceImpl(
         }
     }
 
+    override fun albumart(uri: String): ByteArray {
+        val (data, binary) = mpdRequestHandler.getBinary<MpdBinarySize>(MpdCommand.ALBUMART) {
+            argument(uri)
+            argument("0")
+        }
+
+        val outputStream = ByteArrayOutputStream(data.size)
+
+        outputStream.writeBytes(binary)
+
+        var current = data.binary
+
+        while (current < data.size) {
+            val (moreData, moreBinary) = mpdRequestHandler.getBinary<MpdBinarySize>(MpdCommand.ALBUMART) {
+                argument(uri)
+                argument(current.toString())
+            }
+
+            current += moreData.binary
+
+            outputStream.writeBytes(moreBinary)
+        }
+
+        return outputStream.toByteArray()
+    }
+
     // TODO: this is not really sufficient
     private fun escapeArgument(argument: String): String {
         return argument

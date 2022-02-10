@@ -23,5 +23,6 @@ interface MpdService {
     fun add(uri: String)
     fun count(vararg filter: String): MpdCount
     fun search(mpdRegexFileFilter: MpdRegexFileFilter): List<MpdDatabaseItem>
+    fun albumart(uri: String): ByteArray
 
 }

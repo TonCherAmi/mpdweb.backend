@@ -28,6 +28,11 @@ class DatabaseController(private val databaseService: DatabaseService) {
         return databaseService.search(term)
     }
 
+    @GetMapping("/cover", produces = ["image/*"])
+    fun cover(@RequestParam uri: String): ByteArray {
+        return databaseService.cover(uri)
+    }
+
     @PostMapping("/update")
     fun update() {
         databaseService.update()

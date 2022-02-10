@@ -49,6 +49,10 @@ class DatabaseServiceImpl(private val mpdService: MpdService) : DatabaseService 
         }
     }
 
+    override fun cover(uri: String): ByteArray {
+        return mpdService.albumart(uri)
+    }
+
     private fun makeSearchTermRegex(term: String): Regex {
         return Regex(
             pattern = ".*$term.*",
