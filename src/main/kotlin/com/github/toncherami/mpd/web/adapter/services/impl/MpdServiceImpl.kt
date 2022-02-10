@@ -1,6 +1,7 @@
 package com.github.toncherami.mpd.web.adapter.services.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.toncherami.mpd.web.adapter.dto.MpdBinarySize
 import com.github.toncherami.mpd.web.adapter.dto.MpdChange
 import com.github.toncherami.mpd.web.adapter.dto.MpdCount
 import com.github.toncherami.mpd.web.adapter.dto.MpdDatabaseItem
@@ -14,6 +15,7 @@ import com.github.toncherami.mpd.web.adapter.utils.MpdBoolean
 import com.github.toncherami.mpd.web.adapter.utils.MpdCommand
 import com.github.toncherami.mpd.web.adapter.utils.MpdRequestHandler
 import org.springframework.stereotype.Service
+import java.io.ByteArrayOutputStream
 
 @Service
 class MpdServiceImpl(
@@ -21,69 +23,68 @@ class MpdServiceImpl(
     @Suppress("SpringJavaInjectionPointsAutowiringInspection")
     mpdTcpClient: MpdTcpGateway,
     @Suppress("SpringJavaInjectionPointsAutowiringInspection")
-    mpdNoTimeoutTcpClient: MpdNoTimeoutTcpGateway
+    mpdNoTimeoutTcpClient: MpdNoTimeoutTcpGateway,
 ) : MpdService {
 
     private val mpdRequestHandler = MpdRequestHandler(mpdTcpClient, objectMapper)
     private val mpdNoTimeoutRequestHandler = MpdRequestHandler(mpdNoTimeoutTcpClient, objectMapper)
 
     override fun idle(): List<MpdChange> {
-        return mpdNoTimeoutRequestHandler.performListRequest(MpdCommand.IDLE, listOf("changed"))
+        return mpdNoTimeoutRequestHandler.getList(MpdCommand.IDLE)
     }
 
     override fun play() {
-        mpdRequestHandler.performRequest<Unit>(MpdCommand.PLAY)
+        mpdRequestHandler.perform(MpdCommand.PLAY)
     }
 
     override fun stop() {
-        mpdRequestHandler.performRequest<Unit>(MpdCommand.STOP)
+        mpdRequestHandler.perform(MpdCommand.STOP)
     }
 
     override fun pause() {
-        mpdRequestHandler.performRequest<Unit>(MpdCommand.PAUSE) {
+        mpdRequestHandler.perform(MpdCommand.PAUSE) {
             argument(MpdBoolean.TRUE.value)
         }
     }
 
     override fun next() {
-        mpdRequestHandler.performRequest<Unit>(MpdCommand.NEXT)
+        mpdRequestHandler.perform(MpdCommand.NEXT)
     }
 
     override fun previous() {
-        mpdRequestHandler.performRequest<Unit>(MpdCommand.PREVIOUS)
+        mpdRequestHandler.perform(MpdCommand.PREVIOUS)
     }
 
     override fun clear() {
-        mpdRequestHandler.performRequest<Unit>(MpdCommand.CLEAR)
+        mpdRequestHandler.perform(MpdCommand.CLEAR)
     }
 
     override fun status(): MpdStatus {
-        return mpdRequestHandler.performRequest(MpdCommand.STATUS)
+        return mpdRequestHandler.get(MpdCommand.STATUS)
     }
 
     override fun playlistinfo(): List<MpdFile> {
-        return mpdRequestHandler.performListRequest(MpdCommand.PLAYLISTINFO, listOf("file"))
+        return mpdRequestHandler.getList(MpdCommand.PLAYLISTINFO)
     }
 
     override fun update() {
-        mpdRequestHandler.performRequest<Unit>(MpdCommand.UPDATE)
+        mpdRequestHandler.perform(MpdCommand.UPDATE)
     }
 
     override fun lsinfo(uri: String): List<MpdDatabaseItem> {
-        return mpdRequestHandler.performListRequest(
-            MpdCommand.LSINFO,
-            listOf("file", "playlist", "directory")
-        ) { argument(uri) }
+        return mpdRequestHandler.getList(MpdCommand.LSINFO) {
+            argument(uri)
+        }
     }
 
     override fun add(uri: String) {
-        mpdRequestHandler.performRequest<Unit>(MpdCommand.ADD) {
+        mpdRequestHandler.perform(MpdCommand.ADD) {
             argument(uri)
         }
     }
 
     override fun count(vararg filter: String): MpdCount {
-        return mpdRequestHandler.performRequest(MpdCommand.COUNT) {
+        return mpdRequestHandler.get(MpdCommand.COUNT) {
             filter.forEach(::argument)
         }
     }
@@ -91,7 +92,7 @@ class MpdServiceImpl(
     override fun search(mpdRegexFileFilter: MpdRegexFileFilter): List<MpdDatabaseItem> {
         val escapedRegex = escapeArgument(mpdRegexFileFilter.regex)
 
-        return mpdRequestHandler.performListRequest(MpdCommand.SEARCH, listOf("file")) {
+        return mpdRequestHandler.getList(MpdCommand.SEARCH) {
             argument(
                 "(file =~ '$escapedRegex')"
             )

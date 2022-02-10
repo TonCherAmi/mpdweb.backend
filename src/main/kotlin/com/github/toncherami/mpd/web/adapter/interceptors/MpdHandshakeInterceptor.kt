@@ -1,9 +1,9 @@
 package com.github.toncherami.mpd.web.adapter.interceptors
 
 import com.github.toncherami.mpd.web.adapter.properties.MpdProperties
-import com.github.toncherami.mpd.web.adapter.utils.MPD_OK_RESPONSE_STATUS
 import com.github.toncherami.mpd.web.adapter.utils.MpdCommand
 import com.github.toncherami.mpd.web.adapter.utils.MpdCommandBuilder
+import com.github.toncherami.mpd.web.common.data.Either
 import org.springframework.integration.ip.tcp.connection.TcpConnectionInterceptorSupport
 import org.springframework.integration.support.MessageBuilder
 import org.springframework.messaging.Message
@@ -135,14 +135,7 @@ class MpdHandshakeInterceptor(
     }
 
     private fun Message<*>.isValidHandshakeResponse(): Boolean {
-        val payload = (payload as? String)
-            ?.trim()
-            ?: throw IllegalArgumentException("Unable to cast payload to string")
-
-        return payload.lines()
-            .takeIf { it.count() == 2 }
-            ?.let { (_, status) -> status == MPD_OK_RESPONSE_STATUS }
-            ?: false
+        return payload is Either.Right<*>
     }
 
 }
