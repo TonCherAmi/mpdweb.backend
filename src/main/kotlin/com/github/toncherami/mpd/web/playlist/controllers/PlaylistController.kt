@@ -2,6 +2,7 @@ package com.github.toncherami.mpd.web.playlist.controllers
 
 import com.github.toncherami.mpd.web.database.dto.DatabaseFile
 import com.github.toncherami.mpd.web.playlist.dto.api.request.PlaylistAddBody
+import com.github.toncherami.mpd.web.playlist.dto.api.request.PlaylistReplaceBody
 import com.github.toncherami.mpd.web.playlist.services.PlaylistService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,7 +26,12 @@ class PlaylistController(private val playlistService: PlaylistService) {
 
     @PostMapping("/clear")
     fun clear() {
-        return playlistService.clear()
+        playlistService.clear()
+    }
+
+    @PostMapping("/replace")
+    fun replace(@RequestBody body: PlaylistReplaceBody) {
+        playlistService.replace(body.uri)
     }
 
 }

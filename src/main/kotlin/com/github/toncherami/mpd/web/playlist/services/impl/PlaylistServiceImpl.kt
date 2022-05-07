@@ -13,11 +13,19 @@ class PlaylistServiceImpl(private val mpdService: MpdService) : PlaylistService 
     }
 
     override fun add(uri: String) {
-        return mpdService.add(uri)
+        mpdService.add(uri)
     }
 
     override fun clear() {
-        return mpdService.clear()
+        mpdService.clear()
+    }
+
+    override fun replace(uri: String) {
+        mpdService.commandList {
+            clear()
+            add(uri)
+            play()
+        }
     }
 
 }
