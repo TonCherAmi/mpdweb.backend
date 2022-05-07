@@ -1,7 +1,5 @@
 package com.github.toncherami.mpd.web.adapter.utils
 
-import java.lang.IllegalStateException
-
 enum class MpdCommand(val value: String) {
 
     ADD("add"),
@@ -21,6 +19,8 @@ enum class MpdCommand(val value: String) {
     COUNT("count"),
     SEARCH("search"),
     ALBUMART("albumart");
+    COMMAND_LIST_BEGIN("command_list_begin"),
+    COMMAND_LIST_END("command_list_end"),
 
 }
 
@@ -31,13 +31,27 @@ enum class MpdBoolean(val value: String) {
 
 }
 
-class MpdCommandBuilder {
+class MpdCommandBuilder private constructor(mpdCommand: MpdCommand) {
 
-    private var command: MpdCommand? = null
+    private val stringBuilder = StringBuilder()
+
+    init {
+        stringBuilder.append(mpdCommand.value)
+            .append(' ')
+    }
+
     private val arguments: MutableList<String> = mutableListOf()
 
     fun command(mpdCommand: MpdCommand): MpdCommandBuilder = this.apply {
-        command = mpdCommand
+        stringBuilder
+            .append(
+                joinArguments()
+            )
+            .append('\n')
+            .append(mpdCommand.value)
+            .append(' ')
+
+        arguments.clear()
     }
 
     fun argument(argument: String): MpdCommandBuilder = this.apply {
@@ -45,12 +59,17 @@ class MpdCommandBuilder {
     }
 
     fun build(): String {
-        val commandCode = command?.value
-            ?: throw IllegalStateException("MPD command must be specified before calling build")
+        return "$stringBuilder " + joinArguments()
+    }
 
-        return "$commandCode " + arguments.joinToString(" ") {
-            "\"$it\""
-        }
+    private fun joinArguments() = arguments.joinToString(" ") {
+        "\"$it\""
+    }
+
+    companion object {
+
+        fun command(mpdCommand: MpdCommand) = MpdCommandBuilder(mpdCommand)
+
     }
 
 }

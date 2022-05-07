@@ -11,8 +11,10 @@ import com.github.toncherami.mpd.web.adapter.dto.MpdStatus
 import com.github.toncherami.mpd.web.adapter.gateways.MpdNoTimeoutTcpGateway
 import com.github.toncherami.mpd.web.adapter.gateways.MpdTcpGateway
 import com.github.toncherami.mpd.web.adapter.services.MpdService
+import com.github.toncherami.mpd.web.adapter.services.MpdWriteOnlyService
 import com.github.toncherami.mpd.web.adapter.utils.MpdBoolean
 import com.github.toncherami.mpd.web.adapter.utils.MpdCommand
+import com.github.toncherami.mpd.web.adapter.utils.MpdCommandBuilder
 import com.github.toncherami.mpd.web.adapter.utils.MpdRequestHandler
 import org.springframework.stereotype.Service
 import java.io.ByteArrayOutputStream
@@ -30,7 +32,7 @@ class MpdServiceImpl(
     private val mpdNoTimeoutRequestHandler = MpdRequestHandler(mpdNoTimeoutTcpClient, objectMapper)
 
     override fun idle(): List<MpdChange> {
-        return mpdNoTimeoutRequestHandler.getList(MpdCommand.IDLE)
+        return mpdNoTimeoutRequestHandler.retrieveList(MpdCommand.IDLE)
     }
 
     override fun play() {
@@ -60,11 +62,11 @@ class MpdServiceImpl(
     }
 
     override fun status(): MpdStatus {
-        return mpdRequestHandler.get(MpdCommand.STATUS)
+        return mpdRequestHandler.retrieve(MpdCommand.STATUS)
     }
 
-    override fun playlistinfo(): List<MpdFile> {
-        return mpdRequestHandler.getList(MpdCommand.PLAYLISTINFO)
+    override fun playlistinfo(): List<MpdPlaylistItem> {
+        return mpdRequestHandler.retrieveList(MpdCommand.PLAYLISTINFO)
     }
 
     override fun update() {
@@ -72,7 +74,7 @@ class MpdServiceImpl(
     }
 
     override fun lsinfo(uri: String): List<MpdDatabaseItem> {
-        return mpdRequestHandler.getList(MpdCommand.LSINFO) {
+        return mpdRequestHandler.retrieveList(MpdCommand.LSINFO) {
             argument(uri)
         }
     }
@@ -84,7 +86,7 @@ class MpdServiceImpl(
     }
 
     override fun count(vararg filter: String): MpdCount {
-        return mpdRequestHandler.get(MpdCommand.COUNT) {
+        return mpdRequestHandler.retrieve(MpdCommand.COUNT) {
             filter.forEach(::argument)
         }
     }
@@ -92,7 +94,7 @@ class MpdServiceImpl(
     override fun search(mpdRegexFileFilter: MpdRegexFileFilter): List<MpdDatabaseItem> {
         val escapedRegex = escapeArgument(mpdRegexFileFilter.regex)
 
-        return mpdRequestHandler.getList(MpdCommand.SEARCH) {
+        return mpdRequestHandler.retrieveList(MpdCommand.SEARCH) {
             argument(
                 "(file =~ '$escapedRegex')"
             )
@@ -100,7 +102,7 @@ class MpdServiceImpl(
     }
 
     override fun albumart(uri: String): ByteArray {
-        val (data, binary) = mpdRequestHandler.getBinary<MpdBinarySize>(MpdCommand.ALBUMART) {
+        val (data, binary) = mpdRequestHandler.retrieveBinary<MpdBinarySize>(MpdCommand.ALBUMART) {
             argument(uri)
             argument("0")
         }
@@ -112,7 +114,7 @@ class MpdServiceImpl(
         var current = data.binary
 
         while (current < data.size) {
-            val (moreData, moreBinary) = mpdRequestHandler.getBinary<MpdBinarySize>(MpdCommand.ALBUMART) {
+            val (moreData, moreBinary) = mpdRequestHandler.retrieveBinary<MpdBinarySize>(MpdCommand.ALBUMART) {
                 argument(uri)
                 argument(current.toString())
             }
@@ -123,6 +125,49 @@ class MpdServiceImpl(
         }
 
         return outputStream.toByteArray()
+    }
+
+
+    override fun commandList(fn: MpdWriteOnlyService.() -> Unit) {
+        val mpdCommandBuilder = MpdCommandBuilder.command(MpdCommand.COMMAND_LIST_BEGIN)
+
+        object : MpdWriteOnlyService {
+
+            override fun stop() {
+                mpdCommandBuilder.command(MpdCommand.STOP)
+            }
+
+            override fun pause() {
+                mpdCommandBuilder.command(MpdCommand.PAUSE)
+            }
+
+            override fun next() {
+                mpdCommandBuilder.command(MpdCommand.NEXT)
+            }
+
+            override fun previous() {
+                mpdCommandBuilder.command(MpdCommand.PREVIOUS)
+            }
+
+            override fun clear() {
+                mpdCommandBuilder.command(MpdCommand.CLEAR)
+            }
+
+            override fun update() {
+                mpdCommandBuilder.command(MpdCommand.UPDATE)
+            }
+
+            override fun add(uri: String) {
+                mpdCommandBuilder.command(MpdCommand.ADD)
+                    .argument(uri)
+            }
+
+        }.fn()
+
+        val command = mpdCommandBuilder.command(MpdCommand.COMMAND_LIST_END)
+            .build()
+
+        mpdRequestHandler.perform(command)
     }
 
     // TODO: this is not really sufficient

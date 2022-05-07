@@ -11,35 +11,33 @@ import java.lang.IllegalArgumentException
 
 class MpdRequestHandler(val tcpGateway: TcpGateway, val objectMapper: ObjectMapper) {
 
-    inline fun <reified T> get(
+    inline fun <reified T> retrieve(
         mpdCommand: MpdCommand,
         action: MpdCommandBuilder.() -> Unit = { },
     ): T {
-        return MpdCommandBuilder()
-            .command(mpdCommand)
+        return MpdCommandBuilder.command(mpdCommand)
             .apply(action)
             .build()
-            .let(this::get)
+            .let(this::retrieve)
     }
 
-    inline fun <reified T> get(message: String): T {
+    inline fun <reified T> retrieve(message: String): T {
         val response = tcpGateway.send(message).getOrThrow()
 
         return objectMapper.convertValue(response.pairs.toMap(), T::class.java)
     }
 
-    inline fun <reified T : List<*>> getList(
+    inline fun <reified T : List<*>> retrieveList(
         mpdCommand: MpdCommand,
         action: MpdCommandBuilder.() -> Unit = { },
     ): T {
-        return MpdCommandBuilder()
-            .command(mpdCommand)
+        return MpdCommandBuilder.command(mpdCommand)
             .apply(action)
             .build()
-            .let(::getList)
+            .let(::retrieveList)
     }
 
-    inline fun <reified T : List<*>> getList(message: String): T {
+    inline fun <reified T : List<*>> retrieveList(message: String): T {
         val response = tcpGateway.send(message).getOrThrow()
 
         if (response.pairs.isEmpty()) {
@@ -69,18 +67,17 @@ class MpdRequestHandler(val tcpGateway: TcpGateway, val objectMapper: ObjectMapp
         return objectMapper.convertValue(items, object : TypeReference<T>() {})
     }
 
-    inline fun <reified T> getBinary(
+    inline fun <reified T> retrieveBinary(
         mpdCommand: MpdCommand,
         action: MpdCommandBuilder.() -> Unit = { },
     ): Pair<T, ByteArray> {
-        return MpdCommandBuilder()
-            .command(mpdCommand)
+        return MpdCommandBuilder.command(mpdCommand)
             .apply(action)
             .build()
-            .let(::getBinary)
+            .let(::retrieveBinary)
     }
 
-    inline fun <reified T> getBinary(message: String): Pair<T, ByteArray> {
+    inline fun <reified T> retrieveBinary(message: String): Pair<T, ByteArray> {
         val response = tcpGateway.send(message).getOrThrow()
 
         val binary = response.binary.firstOrNull()
@@ -96,14 +93,13 @@ class MpdRequestHandler(val tcpGateway: TcpGateway, val objectMapper: ObjectMapp
         mpdCommand: MpdCommand,
         action: MpdCommandBuilder.() -> Unit = { },
     ) {
-        return MpdCommandBuilder()
-            .command(mpdCommand)
+        return MpdCommandBuilder.command(mpdCommand)
             .apply(action)
             .build()
             .let(this::perform)
     }
 
-    private fun perform(message: String) {
+    fun perform(message: String) {
         tcpGateway.send(message).validate()
     }
 
