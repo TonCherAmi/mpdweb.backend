@@ -110,16 +110,14 @@ class MpdHandshakeInterceptor(
     }
 
     private fun getPingMessage(): Message<String> {
-        val command = MpdCommandBuilder()
-            .command(MpdCommand.PING)
+        val command = MpdCommandBuilder.command(MpdCommand.PING)
             .build()
 
         return MessageBuilder.withPayload(command).build()
     }
 
     private fun getAuthenticationMessage(): Message<String> {
-        val command = MpdCommandBuilder()
-            .command(MpdCommand.PASSWORD)
+        val command = MpdCommandBuilder.command(MpdCommand.PASSWORD)
             .argument(mpdProperties.password!!)
             .build()
 
