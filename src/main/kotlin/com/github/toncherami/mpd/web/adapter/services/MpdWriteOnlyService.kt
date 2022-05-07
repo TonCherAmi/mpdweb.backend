@@ -12,5 +12,6 @@ interface MpdWriteOnlyService {
     fun add(uri: String)
     fun setvol(vol: Int)
     fun seekcur(time: String)
+    fun playid(id: Int?)
 
 }

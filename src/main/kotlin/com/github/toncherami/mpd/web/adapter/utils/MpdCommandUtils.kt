@@ -6,6 +6,7 @@ enum class MpdCommand(val value: String) {
     IDLE("idle"),
     PING("ping"),
     PLAY("play"),
+    PLAYID("playid"),
     STOP("stop"),
     PAUSE("pause"),
     NEXT("next"),
@@ -20,6 +21,7 @@ enum class MpdCommand(val value: String) {
     SEARCH("search"),
     ALBUMART("albumart");
     SETVOL("setvol"),
+    SEEKCUR("seekcur"),
     COMMAND_LIST_BEGIN("command_list_begin"),
     COMMAND_LIST_END("command_list_end"),
 

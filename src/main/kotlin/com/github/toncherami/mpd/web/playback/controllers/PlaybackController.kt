@@ -1,5 +1,6 @@
 package com.github.toncherami.mpd.web.playback.controllers
 
+import com.github.toncherami.mpd.web.playback.dto.api.request.PlaybackPlayBody
 import com.github.toncherami.mpd.web.playback.dto.api.request.PlaybackSeekBody
 import com.github.toncherami.mpd.web.playback.dto.api.request.enums.PlaybackSeekMode
 import com.github.toncherami.mpd.web.playback.services.PlaybackService
@@ -16,6 +17,11 @@ class PlaybackController(private val playbackService: PlaybackService) {
     @PostMapping("/stop")
     fun stop() {
         playbackService.stop()
+    }
+
+    @PostMapping("/play")
+    fun play(@RequestBody body: PlaybackPlayBody?) {
+        playbackService.play(id = body?.id)
     }
 
     @PostMapping("/toggle")

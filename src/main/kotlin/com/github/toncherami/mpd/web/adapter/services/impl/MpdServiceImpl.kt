@@ -39,6 +39,14 @@ class MpdServiceImpl(
         mpdRequestHandler.perform(MpdCommand.PLAY)
     }
 
+    override fun playid(id: Int?) {
+        mpdRequestHandler.perform(MpdCommand.PLAYID) {
+            if (id != null) {
+                argument(id.toString())
+            }
+        }
+    }
+
     override fun stop() {
         mpdRequestHandler.perform(MpdCommand.STOP)
     }
@@ -143,6 +151,17 @@ class MpdServiceImpl(
         val mpdCommandBuilder = MpdCommandBuilder.command(MpdCommand.COMMAND_LIST_BEGIN)
 
         object : MpdWriteOnlyService {
+            override fun play() {
+                mpdCommandBuilder.command(MpdCommand.PLAY)
+            }
+
+            override fun playid(id: Int?) {
+                mpdCommandBuilder.command(MpdCommand.PLAYID).apply {
+                    if (id != null) {
+                        argument(id.toString())
+                    }
+                }
+            }
 
             override fun stop() {
                 mpdCommandBuilder.command(MpdCommand.STOP)

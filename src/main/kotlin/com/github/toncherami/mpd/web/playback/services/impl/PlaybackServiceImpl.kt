@@ -12,6 +12,10 @@ class PlaybackServiceImpl(private val mpdService: MpdService) : PlaybackService 
         mpdService.stop()
     }
 
+    override fun play(id: Int?) {
+        mpdService.playid(id)
+    }
+
     override fun toggle() {
         val status = mpdService.status()
 
