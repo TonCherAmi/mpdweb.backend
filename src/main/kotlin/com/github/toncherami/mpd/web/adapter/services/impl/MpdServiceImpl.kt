@@ -6,6 +6,7 @@ import com.github.toncherami.mpd.web.adapter.dto.MpdChange
 import com.github.toncherami.mpd.web.adapter.dto.MpdCount
 import com.github.toncherami.mpd.web.adapter.dto.MpdDatabaseItem
 import com.github.toncherami.mpd.web.adapter.dto.MpdFile
+import com.github.toncherami.mpd.web.adapter.dto.MpdPlaylistItem
 import com.github.toncherami.mpd.web.adapter.dto.MpdRegexFileFilter
 import com.github.toncherami.mpd.web.adapter.dto.MpdStatus
 import com.github.toncherami.mpd.web.adapter.gateways.MpdNoTimeoutTcpGateway

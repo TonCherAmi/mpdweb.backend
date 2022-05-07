@@ -8,23 +8,21 @@ import com.github.toncherami.mpd.web.database.dto.enums.DatabaseItemType
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
-class DatabaseFile(
-    uri: String,
-    val id: String?,
-    val position: Int,
+open class DatabaseFile(
     val title: String?,
     val artist: String?,
     @JsonSerialize(using = DurationSerializer::class)
     val duration: Duration,
-) : DatabaseItem(uri, DatabaseItemType.FILE) {
+    override val uri: String,
+) : DatabaseItem {
+
+    override val type: DatabaseItemType = DatabaseItemType.FILE
 
     companion object {
         fun of(mpdFile: MpdFile): DatabaseFile {
             return mpdFile.let {
                 DatabaseFile(
                     uri = it.file,
-                    id = it.id,
-                    position = it.position,
                     artist = it.artist,
                     title = it.title,
                     duration = it.duration.toDuration(TimeUnit.SECONDS)
