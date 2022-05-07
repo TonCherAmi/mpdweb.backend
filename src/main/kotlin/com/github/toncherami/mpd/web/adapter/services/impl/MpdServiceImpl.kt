@@ -127,6 +127,12 @@ class MpdServiceImpl(
         return outputStream.toByteArray()
     }
 
+    override fun setvol(vol: Int) {
+        mpdRequestHandler.perform(MpdCommand.SETVOL) {
+            argument(vol.toString())
+        }
+    }
+
 
     override fun commandList(fn: MpdWriteOnlyService.() -> Unit) {
         val mpdCommandBuilder = MpdCommandBuilder.command(MpdCommand.COMMAND_LIST_BEGIN)
@@ -160,6 +166,11 @@ class MpdServiceImpl(
             override fun add(uri: String) {
                 mpdCommandBuilder.command(MpdCommand.ADD)
                     .argument(uri)
+            }
+
+            override fun setvol(vol: Int) {
+                mpdCommandBuilder.command(MpdCommand.SETVOL)
+                    .argument(vol.toString())
             }
 
         }.fn()
