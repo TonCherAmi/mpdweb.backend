@@ -30,4 +30,16 @@ class PlaybackServiceImpl(private val mpdService: MpdService) : PlaybackService 
         mpdService.previous()
     }
 
+    override fun seek(time: Double) {
+        mpdService.seekcur(time.toString())
+    }
+
+    override fun seekBack(time: Double) {
+        mpdService.seekcur("-$time")
+    }
+
+    override fun seekForward(time: Double) {
+        mpdService.seekcur("+$time")
+    }
+
 }

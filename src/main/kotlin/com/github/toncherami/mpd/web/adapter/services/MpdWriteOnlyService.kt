@@ -11,5 +11,6 @@ interface MpdWriteOnlyService {
     fun update()
     fun add(uri: String)
     fun setvol(vol: Int)
+    fun seekcur(time: String)
 
 }

@@ -133,6 +133,11 @@ class MpdServiceImpl(
         }
     }
 
+    override fun seekcur(time: String) {
+        mpdRequestHandler.perform(MpdCommand.SEEKCUR) {
+            argument(time)
+        }
+    }
 
     override fun commandList(fn: MpdWriteOnlyService.() -> Unit) {
         val mpdCommandBuilder = MpdCommandBuilder.command(MpdCommand.COMMAND_LIST_BEGIN)
@@ -173,6 +178,10 @@ class MpdServiceImpl(
                     .argument(vol.toString())
             }
 
+            override fun seekcur(time: String) {
+                mpdCommandBuilder.command(MpdCommand.SEEKCUR)
+                    .argument(time)
+            }
         }.fn()
 
         val command = mpdCommandBuilder.command(MpdCommand.COMMAND_LIST_END)

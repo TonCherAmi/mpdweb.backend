@@ -6,5 +6,8 @@ interface PlaybackService {
     fun toggle()
     fun next()
     fun prev()
+    fun seek(time: Double)
+    fun seekBack(time: Double)
+    fun seekForward(time: Double)
 
 }
