@@ -19,7 +19,7 @@ enum class MpdCommand(val value: String) {
     LSINFO("lsinfo"),
     COUNT("count"),
     SEARCH("search"),
-    ALBUMART("albumart");
+    ALBUMART("albumart"),
     SETVOL("setvol"),
     SEEKCUR("seekcur"),
     COMMAND_LIST_BEGIN("command_list_begin"),

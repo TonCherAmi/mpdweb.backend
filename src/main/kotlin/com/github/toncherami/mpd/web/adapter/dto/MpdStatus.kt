@@ -7,5 +7,7 @@ data class MpdStatus(
     val state: MpdState,
     val elapsed: Double,
     val duration: Double,
-    val song: Int?
+    val song: Int?,
+    val songid: Int?,
+    val playlistlength: Int,
 )
