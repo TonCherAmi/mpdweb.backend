@@ -9,8 +9,8 @@ plugins {
     kotlin("plugin.spring") version "1.6.20"
 }
 
-// Need 2.12 for @JsonTypeInfo(use = Id.DEDUCTION)
-ext["jackson.version"] = "2.12.0-rc1"
+// Need 2.12+ for @JsonTypeInfo(use = Id.DEDUCTION)
+ext["jackson.version"] = "2.13.1"
 
 group = "com.github.toncherami.mpd"
 version = "0.0.1-SNAPSHOT"
