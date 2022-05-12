@@ -10,5 +10,9 @@ interface PlaybackService {
     fun seekBack(time: Double)
     fun seekForward(time: Double)
     fun play(id: Int?)
+    fun single()
+    fun repeat()
+    fun consume()
+    fun random()
 
 }

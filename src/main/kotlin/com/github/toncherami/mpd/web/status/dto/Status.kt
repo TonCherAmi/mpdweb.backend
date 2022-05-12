@@ -2,8 +2,16 @@ package com.github.toncherami.mpd.web.status.dto
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.github.toncherami.mpd.web.common.serializers.DurationSerializer
-import com.github.toncherami.mpd.web.status.dto.enums.State
+import com.github.toncherami.mpd.web.status.dto.enums.PlaybackState
 import java.time.Duration
+
+enum class SingleState {
+
+    ON,
+    OFF,
+    ONESHOT,
+
+}
 
 data class CurrentSong(
     val id: Int,
@@ -23,14 +31,18 @@ data class CurrentPlaylist(
 )
 
 data class Status(
-    val state: State,
+    val state: PlaybackState,
     val volume: Int,
     val song: CurrentSong?,
     val playlist: CurrentPlaylist,
+    val single: SingleState,
+    val random: Boolean,
+    val repeat: Boolean,
+    val consume: Boolean,
 )
 
 val Status.isStopped: Boolean
-    get() = state == State.STOPPED
+    get() = state == PlaybackState.STOPPED
 
 val Status.isPlaying: Boolean
-    get() = state == State.PLAYING
+    get() = state == PlaybackState.PLAYING

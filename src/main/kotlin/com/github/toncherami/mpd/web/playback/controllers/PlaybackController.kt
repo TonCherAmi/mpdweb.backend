@@ -48,4 +48,24 @@ class PlaybackController(private val playbackService: PlaybackService) {
         }
     }
 
+    @PostMapping("/single/cycle")
+    fun single() {
+        playbackService.single()
+    }
+
+    @PostMapping("/repeat/toggle")
+    fun repeat() {
+        playbackService.repeat()
+    }
+
+    @PostMapping("/consume/toggle")
+    fun consume() {
+        playbackService.consume()
+    }
+
+    @PostMapping("/random/toggle")
+    fun random() {
+        playbackService.random()
+    }
+
 }

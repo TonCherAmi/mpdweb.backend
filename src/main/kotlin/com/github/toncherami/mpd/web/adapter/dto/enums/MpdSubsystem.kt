@@ -7,6 +7,7 @@ enum class MpdSubsystem(private val value: String) {
     MIXER("mixer"),
     PLAYER("player"),
     UPDATE("update"),
+    OPTIONS("options"),
     DATABASE("database"),
     PLAYLIST("playlist");
 

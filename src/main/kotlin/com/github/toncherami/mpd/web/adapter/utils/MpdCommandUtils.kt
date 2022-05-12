@@ -24,7 +24,19 @@ enum class MpdCommand(val value: String) {
     SEEKCUR("seekcur"),
     COMMAND_LIST_BEGIN("command_list_begin"),
     COMMAND_LIST_END("command_list_end"),
+    SINGLE("single"),
+    RANDOM("random"),
+    REPEAT("repeat"),
+    CONSUME("consume"),
 
+}
+
+fun Boolean.toMpdBooleanValue(): String {
+    return if (this) {
+        MpdBoolean.TRUE.value
+    } else {
+        MpdBoolean.FALSE.value
+    }
 }
 
 enum class MpdBoolean(val value: String) {

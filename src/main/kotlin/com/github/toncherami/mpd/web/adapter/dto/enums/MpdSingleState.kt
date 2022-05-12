@@ -2,11 +2,11 @@ package com.github.toncherami.mpd.web.adapter.dto.enums
 
 import com.fasterxml.jackson.annotation.JsonValue
 
-enum class MpdState(private val value: String) {
+enum class MpdSingleState(private val value: String) {
 
-    PLAYING("play"),
-    PAUSED("pause"),
-    STOPPED("stop");
+    ON("1"),
+    OFF("0"),
+    ONESHOT("oneshot");
 
     @JsonValue
     fun toValue() = value

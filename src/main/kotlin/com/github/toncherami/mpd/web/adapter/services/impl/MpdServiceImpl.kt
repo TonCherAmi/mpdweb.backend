@@ -110,6 +110,30 @@ class MpdServiceImpl(
         }
     }
 
+    override fun single(state: String) {
+        mpdRequestHandler.perform(MpdCommand.SINGLE) {
+            argument(state)
+        }
+    }
+
+    override fun random(state: String) {
+        mpdRequestHandler.perform(MpdCommand.RANDOM) {
+            argument(state)
+        }
+    }
+
+    override fun repeat(state: String) {
+        mpdRequestHandler.perform(MpdCommand.REPEAT) {
+            argument(state)
+        }
+    }
+
+    override fun consume(state: String) {
+        mpdRequestHandler.perform(MpdCommand.CONSUME) {
+            argument(state)
+        }
+    }
+
     override fun albumart(uri: String): ByteArray {
         val (data, binary) = mpdRequestHandler.retrieveBinary<MpdBinarySize>(MpdCommand.ALBUMART) {
             argument(uri)
@@ -162,6 +186,26 @@ class MpdServiceImpl(
                         argument(id.toString())
                     }
                 }
+            }
+
+            override fun single(state: String) {
+                mpdCommandBuilder.command(MpdCommand.SINGLE)
+                    .argument(state)
+            }
+
+            override fun random(state: String) {
+                mpdCommandBuilder.command(MpdCommand.RANDOM)
+                    .argument(state)
+            }
+
+            override fun repeat(state: String) {
+                mpdCommandBuilder.command(MpdCommand.REPEAT)
+                    .argument(state)
+            }
+
+            override fun consume(state: String) {
+                mpdCommandBuilder.command(MpdCommand.CONSUME)
+                    .argument(state)
             }
 
             override fun stop() {
