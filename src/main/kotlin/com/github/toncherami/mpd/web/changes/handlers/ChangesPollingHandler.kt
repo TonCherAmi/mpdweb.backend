@@ -2,7 +2,7 @@ package com.github.toncherami.mpd.web.changes.handlers
 
 import com.github.toncherami.mpd.web.changes.config.CHANGES_POLLING_CHANNEL_ID
 import com.github.toncherami.mpd.web.changes.enums.Change
-import com.github.toncherami.mpd.web.changes.services.ChangesService
+import com.github.toncherami.mpd.web.changes.services.ChangesPushService
 import com.github.toncherami.mpd.web.common.services.WebSocketConnectionCountService
 import com.github.toncherami.mpd.web.status.services.StatusPollingService
 import org.springframework.integration.annotation.ServiceActivator
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class ChangesPollingHandler(
-    private val changesService: ChangesService,
+    private val changesPushService: ChangesPushService,
     private val statusPollingService: StatusPollingService,
     private val webSocketConnectionCountService: WebSocketConnectionCountService
 ) {
@@ -22,7 +22,7 @@ class ChangesPollingHandler(
     fun handleChanges(changes: List<Change>) {
         maybeToggleStatusPolling(changes)
 
-        changesService.send(changes)
+        changesPushService.push(changes)
     }
 
     private fun maybeToggleStatusPolling(changes: List<Change>) {

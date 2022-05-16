@@ -2,8 +2,8 @@ package com.github.toncherami.mpd.web.status.services
 
 import com.github.toncherami.mpd.web.status.dto.Status
 
-interface StatusService {
+interface StatusPushService {
 
-    fun get(): Status
+    fun push(status: Status)
 
 }

@@ -1,10 +1,9 @@
 package com.github.toncherami.mpd.web.status.services.impl
 
 import com.github.toncherami.mpd.web.adapter.dto.MpdStatus
-import com.github.toncherami.mpd.web.adapter.dto.enums.MpdSingleState
 import com.github.toncherami.mpd.web.adapter.dto.enums.MpdPlaybackState
+import com.github.toncherami.mpd.web.adapter.dto.enums.MpdSingleState
 import com.github.toncherami.mpd.web.adapter.services.MpdService
-import com.github.toncherami.mpd.web.common.config.STOMP_PLAYER_STATUS_DESTINATION
 import com.github.toncherami.mpd.web.common.utils.toDuration
 import com.github.toncherami.mpd.web.playlist.dto.PlaylistItem
 import com.github.toncherami.mpd.web.playlist.services.PlaylistService
@@ -14,7 +13,6 @@ import com.github.toncherami.mpd.web.status.dto.SingleState
 import com.github.toncherami.mpd.web.status.dto.Status
 import com.github.toncherami.mpd.web.status.dto.enums.PlaybackState
 import com.github.toncherami.mpd.web.status.services.StatusService
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.util.concurrent.TimeUnit
@@ -23,17 +21,12 @@ import java.util.concurrent.TimeUnit
 class StatusServiceImpl(
     private val mpdService: MpdService,
     private val playlistService: PlaylistService,
-    private val simpMessagingTemplate: SimpMessagingTemplate,
 ) : StatusService {
 
     override fun get(): Status {
         val playlist = playlistService.get()
 
         return mpdService.status().toStatus(playlist)
-    }
-
-    override fun send(status: Status) {
-        simpMessagingTemplate.convertAndSend(STOMP_PLAYER_STATUS_DESTINATION, status)
     }
 
 }

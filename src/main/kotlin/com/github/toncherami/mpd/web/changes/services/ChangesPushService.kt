@@ -2,8 +2,8 @@ package com.github.toncherami.mpd.web.changes.services
 
 import com.github.toncherami.mpd.web.changes.enums.Change
 
-interface ChangesService {
+interface ChangesPushService {
 
-    fun get(): List<Change>
+    fun push(changes: List<Change>)
 
 }
