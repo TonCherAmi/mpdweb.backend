@@ -172,6 +172,12 @@ class MpdServiceImpl(
         }
     }
 
+    override fun deleteid(id: Int) {
+        mpdRequestHandler.perform(MpdCommand.DELETEID) {
+            argument(id.toString())
+        }
+    }
+
     override fun commandList(fn: MpdWriteOnlyService.() -> Unit) {
         val mpdCommandBuilder = MpdCommandBuilder.command(MpdCommand.COMMAND_LIST_BEGIN)
 
@@ -206,6 +212,11 @@ class MpdServiceImpl(
             override fun consume(state: String) {
                 mpdCommandBuilder.command(MpdCommand.CONSUME)
                     .argument(state)
+            }
+
+            override fun deleteid(id: Int) {
+                mpdCommandBuilder.command(MpdCommand.DELETEID)
+                    .argument(id.toString())
             }
 
             override fun stop() {

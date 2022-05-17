@@ -8,5 +8,6 @@ interface PlaylistService {
     fun add(uri: String)
     fun clear()
     fun replace(uri: String)
+    fun delete(id: Int)
 
 }

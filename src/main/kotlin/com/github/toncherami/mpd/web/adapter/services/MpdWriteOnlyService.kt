@@ -17,5 +17,6 @@ interface MpdWriteOnlyService {
     fun random(state: String)
     fun repeat(state: String)
     fun consume(state: String)
+    fun deleteid(id: Int)
 
 }

@@ -29,4 +29,8 @@ class PlaylistServiceImpl(private val mpdService: MpdService) : PlaylistService 
         }
     }
 
+    override fun delete(id: Int) {
+        mpdService.deleteid(id)
+    }
+
 }

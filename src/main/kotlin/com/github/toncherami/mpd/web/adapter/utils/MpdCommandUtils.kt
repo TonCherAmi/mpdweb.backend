@@ -28,6 +28,7 @@ enum class MpdCommand(val value: String) {
     RANDOM("random"),
     REPEAT("repeat"),
     CONSUME("consume"),
+    DELETEID("deleteid"),
 
 }
 
