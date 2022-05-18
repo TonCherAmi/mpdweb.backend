@@ -1,11 +1,11 @@
 package com.github.toncherami.mpd.web.adapter.services
 
-import com.github.toncherami.mpd.web.adapter.dto.MpdChange
-import com.github.toncherami.mpd.web.adapter.dto.MpdCount
-import com.github.toncherami.mpd.web.adapter.dto.MpdDatabaseItem
-import com.github.toncherami.mpd.web.adapter.dto.MpdPlaylistItem
-import com.github.toncherami.mpd.web.adapter.dto.MpdRegexFileFilter
-import com.github.toncherami.mpd.web.adapter.dto.MpdStatus
+import com.github.toncherami.mpd.web.adapter.data.MpdChange
+import com.github.toncherami.mpd.web.adapter.data.MpdCount
+import com.github.toncherami.mpd.web.adapter.data.MpdDatabaseItem
+import com.github.toncherami.mpd.web.adapter.data.MpdPlaylistItem
+import com.github.toncherami.mpd.web.adapter.data.MpdRegexFileFilter
+import com.github.toncherami.mpd.web.adapter.data.MpdStatus
 
 interface MpdReadOnlyService {
 

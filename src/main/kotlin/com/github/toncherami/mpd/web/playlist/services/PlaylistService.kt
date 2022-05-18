@@ -1,6 +1,6 @@
 package com.github.toncherami.mpd.web.playlist.services
 
-import com.github.toncherami.mpd.web.playlist.dto.PlaylistItem
+import com.github.toncherami.mpd.web.playlist.data.PlaylistItem
 
 interface PlaylistService {
 

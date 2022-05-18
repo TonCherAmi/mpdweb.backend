@@ -1,6 +1,6 @@
 package com.github.toncherami.mpd.web.changes.services.impl
 
-import com.github.toncherami.mpd.web.adapter.dto.MpdChange
+import com.github.toncherami.mpd.web.adapter.data.MpdChange
 import com.github.toncherami.mpd.web.adapter.services.MpdService
 import com.github.toncherami.mpd.web.changes.enums.Change
 import com.github.toncherami.mpd.web.changes.services.ChangesService

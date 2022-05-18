@@ -1,8 +1,8 @@
 package com.github.toncherami.mpd.web.playback.controllers
 
-import com.github.toncherami.mpd.web.playback.dto.api.request.PlaybackPlayBody
-import com.github.toncherami.mpd.web.playback.dto.api.request.PlaybackSeekBody
-import com.github.toncherami.mpd.web.playback.dto.api.request.enums.PlaybackSeekMode
+import com.github.toncherami.mpd.web.playback.data.api.request.PlaybackPlayBody
+import com.github.toncherami.mpd.web.playback.data.api.request.PlaybackSeekBody
+import com.github.toncherami.mpd.web.playback.data.api.request.enums.PlaybackSeekMode
 import com.github.toncherami.mpd.web.playback.services.PlaybackService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

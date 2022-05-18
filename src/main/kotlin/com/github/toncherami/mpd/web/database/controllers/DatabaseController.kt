@@ -1,7 +1,7 @@
 package com.github.toncherami.mpd.web.database.controllers
 
-import com.github.toncherami.mpd.web.database.dto.DatabaseCount
-import com.github.toncherami.mpd.web.database.dto.DatabaseItem
+import com.github.toncherami.mpd.web.database.data.DatabaseCount
+import com.github.toncherami.mpd.web.database.data.DatabaseItem
 import com.github.toncherami.mpd.web.database.services.DatabaseService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping

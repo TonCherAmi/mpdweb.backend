@@ -1,17 +1,17 @@
 package com.github.toncherami.mpd.web.status.services.impl
 
-import com.github.toncherami.mpd.web.adapter.dto.MpdStatus
-import com.github.toncherami.mpd.web.adapter.dto.enums.MpdPlaybackState
-import com.github.toncherami.mpd.web.adapter.dto.enums.MpdSingleState
+import com.github.toncherami.mpd.web.adapter.data.MpdStatus
+import com.github.toncherami.mpd.web.adapter.data.enums.MpdPlaybackState
+import com.github.toncherami.mpd.web.adapter.data.enums.MpdSingleState
 import com.github.toncherami.mpd.web.adapter.services.MpdService
 import com.github.toncherami.mpd.web.common.utils.toDuration
-import com.github.toncherami.mpd.web.playlist.dto.PlaylistItem
+import com.github.toncherami.mpd.web.playlist.data.PlaylistItem
 import com.github.toncherami.mpd.web.playlist.services.PlaylistService
-import com.github.toncherami.mpd.web.status.dto.CurrentPlaylist
-import com.github.toncherami.mpd.web.status.dto.CurrentSong
-import com.github.toncherami.mpd.web.status.dto.SingleState
-import com.github.toncherami.mpd.web.status.dto.Status
-import com.github.toncherami.mpd.web.status.dto.enums.PlaybackState
+import com.github.toncherami.mpd.web.status.data.CurrentPlaylist
+import com.github.toncherami.mpd.web.status.data.CurrentSong
+import com.github.toncherami.mpd.web.status.data.SingleState
+import com.github.toncherami.mpd.web.status.data.Status
+import com.github.toncherami.mpd.web.status.data.enums.PlaybackState
 import com.github.toncherami.mpd.web.status.services.StatusService
 import org.springframework.stereotype.Service
 import java.time.Duration

@@ -1,6 +1,6 @@
 package com.github.toncherami.mpd.web.volume.controllers
 
-import com.github.toncherami.mpd.web.volume.dto.api.request.VolumeSetBody
+import com.github.toncherami.mpd.web.volume.data.api.request.VolumeSetBody
 import com.github.toncherami.mpd.web.volume.services.VolumeService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

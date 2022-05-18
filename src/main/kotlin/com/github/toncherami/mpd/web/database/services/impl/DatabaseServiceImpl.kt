@@ -1,12 +1,12 @@
 package com.github.toncherami.mpd.web.database.services.impl
 
-import com.github.toncherami.mpd.web.adapter.dto.MpdDatabaseItem
-import com.github.toncherami.mpd.web.adapter.dto.MpdRegexFileFilter
+import com.github.toncherami.mpd.web.adapter.data.MpdDatabaseItem
+import com.github.toncherami.mpd.web.adapter.data.MpdRegexFileFilter
 import com.github.toncherami.mpd.web.adapter.services.MpdService
-import com.github.toncherami.mpd.web.database.dto.DatabaseCount
-import com.github.toncherami.mpd.web.database.dto.DatabaseDirectory
-import com.github.toncherami.mpd.web.database.dto.DatabaseItem
-import com.github.toncherami.mpd.web.database.dto.enums.DatabaseItemType
+import com.github.toncherami.mpd.web.database.data.DatabaseCount
+import com.github.toncherami.mpd.web.database.data.DatabaseDirectory
+import com.github.toncherami.mpd.web.database.data.DatabaseItem
+import com.github.toncherami.mpd.web.database.data.enums.DatabaseItemType
 import com.github.toncherami.mpd.web.database.services.DatabaseService
 import org.springframework.stereotype.Service
 import java.lang.IllegalArgumentException

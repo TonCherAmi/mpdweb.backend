@@ -1,7 +1,7 @@
 package com.github.toncherami.mpd.web.status.services.impl
 
 import com.github.toncherami.mpd.web.status.config.STATUS_POLLING_INTEGRATION_FLOW_ID
-import com.github.toncherami.mpd.web.status.dto.isPlaying
+import com.github.toncherami.mpd.web.status.data.isPlaying
 import com.github.toncherami.mpd.web.status.services.StatusPollingService
 import com.github.toncherami.mpd.web.status.services.StatusService
 import org.springframework.beans.factory.annotation.Qualifier

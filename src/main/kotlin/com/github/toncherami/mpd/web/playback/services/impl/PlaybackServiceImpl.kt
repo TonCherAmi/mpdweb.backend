@@ -1,11 +1,11 @@
 package com.github.toncherami.mpd.web.playback.services.impl
 
-import com.github.toncherami.mpd.web.adapter.dto.enums.MpdSingleState
-import com.github.toncherami.mpd.web.adapter.dto.enums.MpdPlaybackState
+import com.github.toncherami.mpd.web.adapter.data.enums.MpdSingleState
+import com.github.toncherami.mpd.web.adapter.data.enums.MpdPlaybackState
 import com.github.toncherami.mpd.web.adapter.services.MpdService
 import com.github.toncherami.mpd.web.adapter.utils.toMpdBooleanValue
 import com.github.toncherami.mpd.web.playback.services.PlaybackService
-import com.github.toncherami.mpd.web.status.dto.SingleState
+import com.github.toncherami.mpd.web.status.data.SingleState
 import com.github.toncherami.mpd.web.status.services.StatusService
 import org.springframework.stereotype.Service
 

@@ -1,9 +1,9 @@
 package com.github.toncherami.mpd.web.playlist.controllers
 
-import com.github.toncherami.mpd.web.playlist.dto.PlaylistItem
-import com.github.toncherami.mpd.web.playlist.dto.api.request.PlaylistAddBody
-import com.github.toncherami.mpd.web.playlist.dto.api.request.PlaylistDeleteBody
-import com.github.toncherami.mpd.web.playlist.dto.api.request.PlaylistReplaceBody
+import com.github.toncherami.mpd.web.playlist.data.PlaylistItem
+import com.github.toncherami.mpd.web.playlist.data.api.request.PlaylistAddBody
+import com.github.toncherami.mpd.web.playlist.data.api.request.PlaylistDeleteBody
+import com.github.toncherami.mpd.web.playlist.data.api.request.PlaylistReplaceBody
 import com.github.toncherami.mpd.web.playlist.services.PlaylistService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping

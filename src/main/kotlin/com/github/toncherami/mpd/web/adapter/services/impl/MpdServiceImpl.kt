@@ -1,14 +1,13 @@
 package com.github.toncherami.mpd.web.adapter.services.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.toncherami.mpd.web.adapter.dto.MpdBinarySize
-import com.github.toncherami.mpd.web.adapter.dto.MpdChange
-import com.github.toncherami.mpd.web.adapter.dto.MpdCount
-import com.github.toncherami.mpd.web.adapter.dto.MpdDatabaseItem
-import com.github.toncherami.mpd.web.adapter.dto.MpdFile
-import com.github.toncherami.mpd.web.adapter.dto.MpdPlaylistItem
-import com.github.toncherami.mpd.web.adapter.dto.MpdRegexFileFilter
-import com.github.toncherami.mpd.web.adapter.dto.MpdStatus
+import com.github.toncherami.mpd.web.adapter.data.MpdBinarySize
+import com.github.toncherami.mpd.web.adapter.data.MpdChange
+import com.github.toncherami.mpd.web.adapter.data.MpdCount
+import com.github.toncherami.mpd.web.adapter.data.MpdDatabaseItem
+import com.github.toncherami.mpd.web.adapter.data.MpdPlaylistItem
+import com.github.toncherami.mpd.web.adapter.data.MpdRegexFileFilter
+import com.github.toncherami.mpd.web.adapter.data.MpdStatus
 import com.github.toncherami.mpd.web.adapter.gateways.MpdNoTimeoutTcpGateway
 import com.github.toncherami.mpd.web.adapter.gateways.MpdTcpGateway
 import com.github.toncherami.mpd.web.adapter.services.MpdService
