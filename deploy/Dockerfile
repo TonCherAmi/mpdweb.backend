@@ -1,4 +1,4 @@
-FROMq gradle:7.4-jdk11 AS builder
+FROM gradle:7.4-jdk11 AS builder
 
 WORKDIR /home/gradle/mpdweb
 
