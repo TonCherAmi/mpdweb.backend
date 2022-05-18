@@ -1,15 +1,15 @@
-package com.github.toncherami.mpd.web.playlist.services.impl
+package com.github.toncherami.mpd.web.queue.services.impl
 
 import com.github.toncherami.mpd.web.adapter.services.MpdService
-import com.github.toncherami.mpd.web.playlist.data.PlaylistItem
-import com.github.toncherami.mpd.web.playlist.services.PlaylistService
+import com.github.toncherami.mpd.web.queue.data.QueueItem
+import com.github.toncherami.mpd.web.queue.services.QueueService
 import org.springframework.stereotype.Service
 
 @Service
-class PlaylistServiceImpl(private val mpdService: MpdService) : PlaylistService {
+class QueueServiceImpl(private val mpdService: MpdService) : QueueService {
 
-    override fun get(): List<PlaylistItem> {
-        return mpdService.playlistinfo().map(PlaylistItem::of)
+    override fun get(): List<QueueItem> {
+        return mpdService.playlistinfo().map(QueueItem::of)
     }
 
     override fun add(uri: String) {

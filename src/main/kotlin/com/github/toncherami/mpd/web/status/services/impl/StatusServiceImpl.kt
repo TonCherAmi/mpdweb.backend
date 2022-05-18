@@ -5,9 +5,9 @@ import com.github.toncherami.mpd.web.adapter.data.enums.MpdPlaybackState
 import com.github.toncherami.mpd.web.adapter.data.enums.MpdSingleState
 import com.github.toncherami.mpd.web.adapter.services.MpdService
 import com.github.toncherami.mpd.web.common.utils.toDuration
-import com.github.toncherami.mpd.web.playlist.data.PlaylistItem
-import com.github.toncherami.mpd.web.playlist.services.PlaylistService
-import com.github.toncherami.mpd.web.status.data.CurrentPlaylist
+import com.github.toncherami.mpd.web.queue.data.QueueItem
+import com.github.toncherami.mpd.web.queue.services.QueueService
+import com.github.toncherami.mpd.web.status.data.Queue
 import com.github.toncherami.mpd.web.status.data.CurrentSong
 import com.github.toncherami.mpd.web.status.data.SingleState
 import com.github.toncherami.mpd.web.status.data.Status
@@ -20,18 +20,18 @@ import java.util.concurrent.TimeUnit
 @Service
 class StatusServiceImpl(
     private val mpdService: MpdService,
-    private val playlistService: PlaylistService,
+    private val queueService: QueueService,
 ) : StatusService {
 
     override fun get(): Status {
-        val playlist = playlistService.get()
+        val queue = queueService.get()
 
-        return mpdService.status().toStatus(playlist)
+        return mpdService.status().toStatus(queue)
     }
 
 }
 
-private fun MpdStatus.toStatus(playlist: List<PlaylistItem>): Status {
+private fun MpdStatus.toStatus(queue: List<QueueItem>): Status {
     val currentSongElapsed = elapsed.toDuration(TimeUnit.SECONDS)
 
     return Status(
@@ -47,18 +47,18 @@ private fun MpdStatus.toStatus(playlist: List<PlaylistItem>): Status {
                 duration = duration.toDuration(TimeUnit.SECONDS),
             )
         },
-        playlist = CurrentPlaylist(
+        queue = Queue(
             length = playlistlength,
             elapsed = if (song == null) {
                 Duration.ZERO
             } else {
-                currentSongElapsed + playlist
+                currentSongElapsed + queue
                     .takeWhile { it.position < song }
                     .fold(Duration.ZERO) { acc, playlistItem ->
                         acc + playlistItem.duration
                     }
             },
-            duration = playlist
+            duration = queue
                 .fold(Duration.ZERO) { acc, playlistItem ->
                     acc + playlistItem.duration
                 }

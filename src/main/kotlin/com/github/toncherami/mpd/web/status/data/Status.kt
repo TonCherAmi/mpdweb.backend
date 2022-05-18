@@ -22,7 +22,7 @@ data class CurrentSong(
     val duration: Duration,
 )
 
-data class CurrentPlaylist(
+data class Queue(
     val length: Int,
     @JsonSerialize(using = DurationSerializer::class)
     val elapsed: Duration,
@@ -34,7 +34,7 @@ data class Status(
     val state: PlaybackState,
     val volume: Int,
     val song: CurrentSong?,
-    val playlist: CurrentPlaylist,
+    val queue: Queue,
     val single: SingleState,
     val random: Boolean,
     val repeat: Boolean,

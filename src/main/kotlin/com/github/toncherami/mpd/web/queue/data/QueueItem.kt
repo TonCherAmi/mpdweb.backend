@@ -1,4 +1,4 @@
-package com.github.toncherami.mpd.web.playlist.data
+package com.github.toncherami.mpd.web.queue.data
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.github.toncherami.mpd.web.adapter.data.MpdPlaylistItem
@@ -8,7 +8,7 @@ import com.github.toncherami.mpd.web.database.data.DatabaseFile
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
-class PlaylistItem(
+class QueueItem(
     val id: Int,
     val position: Int,
     title: String?,
@@ -19,9 +19,9 @@ class PlaylistItem(
 ) : DatabaseFile(title = title, artist = artist, duration = duration, uri = uri) {
 
     companion object {
-        fun of(mpdPlaylistItem: MpdPlaylistItem): PlaylistItem {
+        fun of(mpdPlaylistItem: MpdPlaylistItem): QueueItem {
             return mpdPlaylistItem.let {
-                PlaylistItem(
+                QueueItem(
                     id = it.id,
                     position = it.position,
                     artist = it.artist,
