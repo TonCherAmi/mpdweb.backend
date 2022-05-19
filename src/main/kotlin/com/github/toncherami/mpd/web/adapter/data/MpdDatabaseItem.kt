@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
 @JsonSubTypes(
-    JsonSubTypes.Type(MpdFile::class),
-    JsonSubTypes.Type(MpdPlaylist::class),
-    JsonSubTypes.Type(MpdDirectory::class)
+    JsonSubTypes.Type(MpdDatabaseFile::class),
+    JsonSubTypes.Type(MpdDatabasePlaylist::class),
+    JsonSubTypes.Type(MpdDatabaseDirectory::class)
 )
-@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = MpdFile::class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = MpdDatabaseFile::class)
 abstract class MpdDatabaseItem {
 
     companion object {

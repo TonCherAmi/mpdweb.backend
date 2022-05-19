@@ -1,9 +1,9 @@
 package com.github.toncherami.mpd.web.database.data
 
 import com.github.toncherami.mpd.web.adapter.data.MpdDatabaseItem
-import com.github.toncherami.mpd.web.adapter.data.MpdDirectory
-import com.github.toncherami.mpd.web.adapter.data.MpdFile
-import com.github.toncherami.mpd.web.adapter.data.MpdPlaylist
+import com.github.toncherami.mpd.web.adapter.data.MpdDatabaseDirectory
+import com.github.toncherami.mpd.web.adapter.data.MpdDatabaseFile
+import com.github.toncherami.mpd.web.adapter.data.MpdDatabasePlaylist
 import com.github.toncherami.mpd.web.database.data.enums.DatabaseItemType
 import java.lang.IllegalArgumentException
 
@@ -16,9 +16,9 @@ interface DatabaseItem {
     companion object {
         fun of(mpdDatabaseItem: MpdDatabaseItem): DatabaseItem {
             return when(mpdDatabaseItem) {
-                is MpdFile -> DatabaseFile.of(mpdDatabaseItem)
-                is MpdPlaylist -> DatabasePlaylist.of(mpdDatabaseItem)
-                is MpdDirectory -> DatabaseDirectory.of(mpdDatabaseItem)
+                is MpdDatabaseFile -> DatabaseFile.of(mpdDatabaseItem)
+                is MpdDatabasePlaylist -> DatabasePlaylist.of(mpdDatabaseItem)
+                is MpdDatabaseDirectory -> DatabaseDirectory.of(mpdDatabaseItem)
                 else -> throw IllegalArgumentException("Unsupported database item subtype")
             }
         }

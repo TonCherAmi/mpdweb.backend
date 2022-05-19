@@ -12,5 +12,7 @@ class MpdPlaylistItem(
     @JsonProperty("Title")
     title: String?,
     @JsonProperty("Artist")
-    artist: String?
-) : MpdFile(file = file, duration = duration, title = title, artist = artist)
+    artist: String?,
+    @JsonProperty("Format")
+    format: String,
+) : MpdDatabaseFile(file = file, duration = duration, title = title, artist = artist, format = format)

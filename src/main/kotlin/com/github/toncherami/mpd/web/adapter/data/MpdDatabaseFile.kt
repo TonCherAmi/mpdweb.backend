@@ -6,11 +6,13 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 @JsonSubTypes(
     JsonSubTypes.Type(MpdPlaylistItem::class),
 )
-open class MpdFile(
+open class MpdDatabaseFile(
     val file: String,
     val duration: Double,
     @JsonProperty("Title")
     val title: String?,
     @JsonProperty("Artist")
-    val artist: String?
+    val artist: String?,
+    @JsonProperty("Format")
+    val format: String
 ) : MpdDatabaseItem()
