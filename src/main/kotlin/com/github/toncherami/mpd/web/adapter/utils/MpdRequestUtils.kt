@@ -27,21 +27,21 @@ class MpdRequestHandler(val tcpGateway: TcpGateway, val objectMapper: ObjectMapp
         return objectMapper.convertValue(response.pairs.toMap(), T::class.java)
     }
 
-    inline fun <reified T : List<*>> retrieveList(
+    inline fun <reified T> retrieveList(
         mpdCommand: MpdCommand,
         action: MpdCommandBuilder.() -> Unit = { },
-    ): T {
+    ): List<T> {
         return MpdCommandBuilder.command(mpdCommand)
             .apply(action)
             .build()
             .let(::retrieveList)
     }
 
-    inline fun <reified T : List<*>> retrieveList(message: String): T {
+    inline fun <reified T> retrieveList(message: String): List<T> {
         val response = tcpGateway.send(message).getOrThrow()
 
         if (response.pairs.isEmpty()) {
-            return objectMapper.convertValue(response.pairs, T::class.java)
+            return emptyList()
         }
 
         val items = mutableListOf<Map<String, String>>()
@@ -64,7 +64,11 @@ class MpdRequestHandler(val tcpGateway: TcpGateway, val objectMapper: ObjectMapp
 
         items.add(accumulator.toMap())
 
-        return objectMapper.convertValue(items, object : TypeReference<T>() {})
+        return items.mapNotNull {
+            runCatching {
+                objectMapper.convertValue(it, T::class.java)
+            }.getOrNull()
+        }
     }
 
     inline fun <reified T> retrieveBinary(
