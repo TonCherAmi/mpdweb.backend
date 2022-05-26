@@ -1,10 +1,13 @@
 package com.github.toncherami.mpd.web.adapter.services.impl
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.toncherami.mpd.web.adapter.data.MpdBinarySize
 import com.github.toncherami.mpd.web.adapter.data.MpdChange
 import com.github.toncherami.mpd.web.adapter.data.MpdCount
+import com.github.toncherami.mpd.web.adapter.data.MpdDatabaseFile
 import com.github.toncherami.mpd.web.adapter.data.MpdDatabaseItem
+import com.github.toncherami.mpd.web.adapter.data.MpdPlaylist
 import com.github.toncherami.mpd.web.adapter.data.MpdPlaylistItem
 import com.github.toncherami.mpd.web.adapter.data.MpdRegexFileFilter
 import com.github.toncherami.mpd.web.adapter.data.MpdStatus
@@ -133,6 +136,16 @@ class MpdServiceImpl(
         }
     }
 
+    override fun listplaylists(): List<MpdPlaylist> {
+        return mpdRequestHandler.retrieveList(MpdCommand.LISTPLAYLISTS)
+    }
+
+    override fun listplaylistinfo(name: String): List<MpdDatabaseFile> {
+        return mpdRequestHandler.retrieveList(MpdCommand.LISTPLAYLISTINFO) {
+            argument(name)
+        }
+    }
+
     override fun albumart(uri: String): ByteArray {
         val (data, binary) = mpdRequestHandler.retrieveBinary<MpdBinarySize>(MpdCommand.ALBUMART) {
             argument(uri)
@@ -177,6 +190,39 @@ class MpdServiceImpl(
         }
     }
 
+    override fun rm(name: String) {
+        mpdRequestHandler.perform(MpdCommand.RM) {
+            argument(name)
+        }
+    }
+
+    override fun load(name: String) {
+        mpdRequestHandler.perform(MpdCommand.LOAD) {
+            argument(name)
+        }
+    }
+
+    override fun rename(name: String, newName: String) {
+        mpdRequestHandler.perform(MpdCommand.RENAME) {
+            argument(name)
+            argument(newName)
+        }
+    }
+
+    override fun playlistadd(name: String, uri: String) {
+        mpdRequestHandler.perform(MpdCommand.PLAYLISTADD) {
+            argument(name)
+            argument(uri)
+        }
+    }
+
+    override fun playlistdelete(name: String, pos: Int) {
+        mpdRequestHandler.perform(MpdCommand.PLAYLISTDELETE) {
+            argument(name)
+            argument(pos.toString())
+        }
+    }
+
     override fun commandList(fn: MpdWriteOnlyService.() -> Unit) {
         val mpdCommandBuilder = MpdCommandBuilder.command(MpdCommand.COMMAND_LIST_BEGIN)
 
@@ -216,6 +262,34 @@ class MpdServiceImpl(
             override fun deleteid(id: Int) {
                 mpdCommandBuilder.command(MpdCommand.DELETEID)
                     .argument(id.toString())
+            }
+
+            override fun rm(name: String) {
+                mpdCommandBuilder.command(MpdCommand.RM)
+                    .argument(name)
+            }
+
+            override fun load(name: String) {
+                mpdCommandBuilder.command(MpdCommand.LOAD)
+                    .argument(name)
+            }
+
+            override fun rename(name: String, newName: String) {
+                mpdCommandBuilder.command(MpdCommand.RENAME)
+                    .argument(name)
+                    .argument(newName)
+            }
+
+            override fun playlistadd(name: String, uri: String) {
+                mpdCommandBuilder.command(MpdCommand.PLAYLISTADD)
+                    .argument(name)
+                    .argument(uri)
+            }
+
+            override fun playlistdelete(name: String, pos: Int) {
+                mpdCommandBuilder.command(MpdCommand.PLAYLISTDELETE)
+                    .argument(name)
+                    .argument(pos.toString())
             }
 
             override fun stop() {

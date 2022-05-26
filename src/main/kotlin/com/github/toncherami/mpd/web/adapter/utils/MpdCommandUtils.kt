@@ -29,6 +29,13 @@ enum class MpdCommand(val value: String) {
     REPEAT("repeat"),
     CONSUME("consume"),
     DELETEID("deleteid"),
+    LISTPLAYLISTS("listplaylists"),
+    LISTPLAYLISTINFO("listplaylistinfo"),
+    RENAME("rename"),
+    RM("rm"),
+    LOAD("load"),
+    PLAYLISTADD("playlistadd"),
+    PLAYLISTDELETE("playlistdelete"),
 
 }
 

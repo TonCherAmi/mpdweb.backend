@@ -1,3 +1,7 @@
 package com.github.toncherami.mpd.web.queue.data.api.request
 
-data class QueueReplaceBody(val uri: String)
+import com.github.toncherami.mpd.web.queue.data.QueueSource
+
+data class QueueReplaceBody(
+    val source: QueueSource,
+)

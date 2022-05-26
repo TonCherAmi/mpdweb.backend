@@ -24,7 +24,7 @@ class QueueController(private val queueService: QueueService) {
 
     @PostMapping
     fun add(@RequestBody body: QueueAddBody) {
-        queueService.add(body.uri)
+        queueService.add(body.source)
     }
 
     @DeleteMapping
@@ -40,7 +40,7 @@ class QueueController(private val queueService: QueueService) {
 
     @PutMapping
     fun replace(@RequestBody body: QueueReplaceBody) {
-        queueService.replace(body.uri)
+        queueService.replace(body.source)
     }
 
 }

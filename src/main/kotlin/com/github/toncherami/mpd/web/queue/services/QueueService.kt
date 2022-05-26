@@ -1,13 +1,14 @@
 package com.github.toncherami.mpd.web.queue.services
 
 import com.github.toncherami.mpd.web.queue.data.QueueItem
+import com.github.toncherami.mpd.web.queue.data.QueueSource
 
 interface QueueService {
 
     fun get(): List<QueueItem>
-    fun add(uri: String)
+    fun add(source: QueueSource)
     fun clear()
-    fun replace(uri: String)
+    fun replace(source: QueueSource)
     fun delete(id: Int)
 
 }

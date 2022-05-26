@@ -18,5 +18,10 @@ interface MpdWriteOnlyService {
     fun repeat(state: String)
     fun consume(state: String)
     fun deleteid(id: Int)
+    fun rm(name: String)
+    fun load(name: String)
+    fun rename(name: String, newName: String)
+    fun playlistadd(name: String, uri: String)
+    fun playlistdelete(name: String, pos: Int)
 
 }

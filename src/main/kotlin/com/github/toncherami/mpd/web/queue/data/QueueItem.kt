@@ -14,11 +14,12 @@ class QueueItem(
     val position: Int,
     title: String?,
     artist: String?,
+    album: String?,
     @JsonSerialize(using = DurationSerializer::class)
     duration: Duration,
     uri: String,
     format: DatabaseAudioFormat,
-) : DatabaseFile(title = title, artist = artist, duration = duration, uri = uri, format = format) {
+) : DatabaseFile(title = title, artist = artist, album = album, duration = duration, uri = uri, format = format) {
 
     companion object {
         fun of(mpdPlaylistItem: MpdPlaylistItem): QueueItem {
@@ -28,6 +29,7 @@ class QueueItem(
                     position = it.position,
                     artist = it.artist,
                     title = it.title,
+                    album = it.album,
                     duration = it.duration.toDuration(TimeUnit.SECONDS),
                     uri = it.file,
                     format = DatabaseAudioFormat.of(it.format)

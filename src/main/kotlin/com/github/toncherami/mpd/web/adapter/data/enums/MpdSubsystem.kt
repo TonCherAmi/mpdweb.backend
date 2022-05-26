@@ -9,7 +9,8 @@ enum class MpdSubsystem(private val value: String) {
     UPDATE("update"),
     OPTIONS("options"),
     DATABASE("database"),
-    PLAYLIST("playlist");
+    PLAYLIST("playlist"),
+    STORED_PLAYLIST("stored_playlist");
 
     @JsonValue
     fun toValue() = value

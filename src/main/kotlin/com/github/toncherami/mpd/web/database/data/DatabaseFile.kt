@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit
 open class DatabaseFile(
     val title: String?,
     val artist: String?,
+    val album: String?,
     val format: DatabaseAudioFormat,
     @JsonSerialize(using = DurationSerializer::class)
     val duration: Duration,
@@ -26,6 +27,7 @@ open class DatabaseFile(
                     uri = it.file,
                     artist = it.artist,
                     title = it.title,
+                    album = it.album,
                     format = DatabaseAudioFormat.of(it.format),
                     duration = it.duration.toDuration(TimeUnit.SECONDS)
                 )

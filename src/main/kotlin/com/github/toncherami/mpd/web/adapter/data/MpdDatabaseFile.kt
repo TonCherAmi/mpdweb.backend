@@ -13,6 +13,8 @@ open class MpdDatabaseFile(
     val title: String?,
     @JsonProperty("Artist")
     val artist: String?,
+    @JsonProperty("Album")
+    val album: String?,
     @JsonProperty("Format")
     val format: String
 ) : MpdDatabaseItem()
