@@ -14,4 +14,4 @@ COPY --from=builder /home/gradle/mpdweb/build/libs/mpdweb.jar /srv
 
 EXPOSE 8080
 
-CMD java -jar mpdweb.jar
+CMD java -XX:+UseContainerSupport -XX:MinRAMPercentage=40.0 -XX:MaxRAMPercentage=80.0 -jar mpdweb.jar
