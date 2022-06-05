@@ -1,6 +1,5 @@
 package com.github.toncherami.mpd.web.adapter.services.impl
 
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.toncherami.mpd.web.adapter.data.MpdBinarySize
 import com.github.toncherami.mpd.web.adapter.data.MpdChange
@@ -11,6 +10,8 @@ import com.github.toncherami.mpd.web.adapter.data.MpdPlaylist
 import com.github.toncherami.mpd.web.adapter.data.MpdPlaylistItem
 import com.github.toncherami.mpd.web.adapter.data.MpdRegexFileFilter
 import com.github.toncherami.mpd.web.adapter.data.MpdStatus
+import com.github.toncherami.mpd.web.adapter.deserializers.data.enums.MpdErrorCode
+import com.github.toncherami.mpd.web.adapter.exceptions.MpdException
 import com.github.toncherami.mpd.web.adapter.gateways.MpdNoTimeoutTcpGateway
 import com.github.toncherami.mpd.web.adapter.gateways.MpdTcpGateway
 import com.github.toncherami.mpd.web.adapter.services.MpdService
@@ -147,9 +148,22 @@ class MpdServiceImpl(
     }
 
     override fun albumart(uri: String): ByteArray {
-        val (data, binary) = mpdRequestHandler.retrieveBinary<MpdBinarySize>(MpdCommand.ALBUMART) {
-            argument(uri)
+        return retrieveAllBinary(MpdCommand.ALBUMART, listOf(uri))
+    }
+
+    override fun readpicture(uri: String): ByteArray {
+        return retrieveAllBinary(MpdCommand.READPICTURE, listOf(uri))
+    }
+
+    private fun retrieveAllBinary(mpdCommand: MpdCommand, arguments: List<String>): ByteArray {
+        val (data, binary) = mpdRequestHandler.retrieveBinary<MpdBinarySize>(mpdCommand) {
+            arguments.forEach(this::argument)
+
             argument("0")
+        }
+
+        if (data.size == 0) {
+            throw MpdException(MpdErrorCode.NO_EXIST, mpdCommand.value, 0, "empty binary response")
         }
 
         val outputStream = ByteArrayOutputStream(data.size)
@@ -159,8 +173,9 @@ class MpdServiceImpl(
         var current = data.binary
 
         while (current < data.size) {
-            val (moreData, moreBinary) = mpdRequestHandler.retrieveBinary<MpdBinarySize>(MpdCommand.ALBUMART) {
-                argument(uri)
+            val (moreData, moreBinary) = mpdRequestHandler.retrieveBinary<MpdBinarySize>(mpdCommand) {
+                arguments.forEach(this::argument)
+
                 argument(current.toString())
             }
 

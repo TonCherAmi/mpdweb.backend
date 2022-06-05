@@ -1,13 +1,11 @@
 package com.github.toncherami.mpd.web.adapter.utils
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.toncherami.mpd.web.adapter.deserializers.data.MpdError
 import com.github.toncherami.mpd.web.adapter.deserializers.data.MpdResponse
 import com.github.toncherami.mpd.web.adapter.exceptions.MpdException
 import com.github.toncherami.mpd.web.adapter.gateways.base.TcpGateway
 import com.github.toncherami.mpd.web.common.data.Either
-import java.lang.IllegalArgumentException
 
 class MpdRequestHandler(val tcpGateway: TcpGateway, val objectMapper: ObjectMapper) {
 
@@ -85,7 +83,7 @@ class MpdRequestHandler(val tcpGateway: TcpGateway, val objectMapper: ObjectMapp
         val response = tcpGateway.send(message).getOrThrow()
 
         val binary = response.binary.firstOrNull()
-            ?: throw IllegalArgumentException("No binary data received in response to message '$message'")
+            ?: byteArrayOf()
 
         return Pair(
             objectMapper.convertValue(response.pairs.toMap(), T::class.java),

@@ -18,6 +18,7 @@ interface MpdReadOnlyService {
     fun count(vararg filter: String): MpdCount
     fun search(mpdRegexFileFilter: MpdRegexFileFilter): List<MpdDatabaseItem>
     fun albumart(uri: String): ByteArray
+    fun readpicture(uri: String): ByteArray
     fun listplaylists(): List<MpdPlaylist>
     fun listplaylistinfo(name: String): List<MpdDatabaseFile>
 

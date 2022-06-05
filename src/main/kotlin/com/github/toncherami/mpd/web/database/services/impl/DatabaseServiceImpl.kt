@@ -6,6 +6,7 @@ import com.github.toncherami.mpd.web.adapter.services.MpdService
 import com.github.toncherami.mpd.web.database.data.DatabaseCount
 import com.github.toncherami.mpd.web.database.data.DatabaseDirectory
 import com.github.toncherami.mpd.web.database.data.DatabaseItem
+import com.github.toncherami.mpd.web.database.data.enums.DatabaseCoverType
 import com.github.toncherami.mpd.web.database.data.enums.DatabaseItemType
 import com.github.toncherami.mpd.web.database.services.DatabaseService
 import org.springframework.stereotype.Service
@@ -49,8 +50,11 @@ class DatabaseServiceImpl(private val mpdService: MpdService) : DatabaseService 
         }
     }
 
-    override fun cover(uri: String): ByteArray {
-        return mpdService.albumart(uri)
+    override fun cover(uri: String, type: DatabaseCoverType): ByteArray {
+        return when (type) {
+            DatabaseCoverType.DIRECTORY -> mpdService.albumart(uri)
+            DatabaseCoverType.EMBEDDED -> mpdService.readpicture(uri)
+        }
     }
 
     private fun makeSearchTermRegex(term: String): Regex {
