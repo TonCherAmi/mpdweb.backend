@@ -2,6 +2,7 @@ package com.github.toncherami.mpd.web.adapter.deserializers
 
 import com.github.toncherami.mpd.web.adapter.deserializers.data.MpdError
 import com.github.toncherami.mpd.web.adapter.deserializers.data.MpdResponse
+import com.github.toncherami.mpd.web.adapter.deserializers.data.enums.MpdErrorCode
 import com.github.toncherami.mpd.web.adapter.deserializers.exceptions.MpdDeserializationException
 import com.github.toncherami.mpd.web.common.data.Either
 import org.springframework.core.serializer.Deserializer
@@ -105,7 +106,8 @@ class MpdDeserializer : Deserializer<Either<MpdError, MpdResponse>> {
             ?: throw MpdDeserializationException(what = "MPD command index", from = line)
 
         return MpdError(
-            code = code,
+            code = MpdErrorCode.values().find { it.value == code }
+                ?: MpdErrorCode.UNK,
             message = message,
             command = command,
             commandIndex = commandIndex
