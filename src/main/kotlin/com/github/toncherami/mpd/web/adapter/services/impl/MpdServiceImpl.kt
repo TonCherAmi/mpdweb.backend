@@ -97,9 +97,11 @@ class MpdServiceImpl(
         }
     }
 
-    override fun count(vararg filter: String): MpdCount {
+    override fun count(uri: String): MpdCount {
+        val escapedRegex = escapeArgument(uri)
+
         return mpdRequestHandler.retrieve(MpdCommand.COUNT) {
-            filter.forEach(::argument)
+            argument("(base '$escapedRegex')")
         }
     }
 
@@ -107,9 +109,7 @@ class MpdServiceImpl(
         val escapedRegex = escapeArgument(mpdRegexFileFilter.regex)
 
         return mpdRequestHandler.retrieveList(MpdCommand.SEARCH) {
-            argument(
-                "(file =~ '$escapedRegex')"
-            )
+            argument("(file =~ '$escapedRegex')")
         }
     }
 

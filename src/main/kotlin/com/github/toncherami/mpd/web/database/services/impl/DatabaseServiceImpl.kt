@@ -26,7 +26,7 @@ class DatabaseServiceImpl(private val mpdService: MpdService) : DatabaseService 
     }
 
     override fun count(uri: String): DatabaseCount {
-        return mpdService.count("base", uri)
+        return mpdService.count(uri)
             .let(DatabaseCount::of)
     }
 
