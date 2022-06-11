@@ -1,6 +1,7 @@
 package com.github.toncherami.mpd.web.adapter.deserializers
 
 import com.github.toncherami.mpd.web.adapter.deserializers.data.MpdError
+import com.github.toncherami.mpd.web.adapter.deserializers.data.enums.MpdErrorCode
 import com.github.toncherami.mpd.web.adapter.deserializers.exceptions.MpdDeserializationException
 import com.github.toncherami.mpd.web.common.data.Either
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -143,7 +144,7 @@ internal class MpdDeserializerTest {
 
         assertEquals(
             MpdError(
-                code = 5,
+                code = MpdErrorCode.UNKNOWN_CMD,
                 message = "unknown command \"test\"",
                 command = null,
                 commandIndex = 0,
