@@ -37,17 +37,20 @@ class DatabaseServiceImpl(private val mpdService: MpdService) : DatabaseService 
 
         val regex = makeSearchTermRegex(term)
 
-        return files.flatMap { mpdDatabaseItem ->
-            val databaseItem = DatabaseItem.of(mpdDatabaseItem)
+        return files
+            .flatMap { mpdDatabaseItem ->
+                val databaseItem = DatabaseItem.of(mpdDatabaseItem)
 
-            getUriMatches(databaseItem, regex)
-        }.distinctBy(DatabaseItem::uri).sortedWith { a, b ->
-            when {
-                a.type == DatabaseItemType.DIRECTORY && b.type == DatabaseItemType.FILE -> -1
-                a.type == DatabaseItemType.FILE && b.type == DatabaseItemType.DIRECTORY -> 1
-                else -> compareValues(a.uri, b.uri)
+                getUriMatches(databaseItem, regex)
             }
-        }
+            .distinctBy(DatabaseItem::uri)
+            .sortedWith { a, b ->
+                when {
+                    a.type == DatabaseItemType.DIRECTORY && b.type == DatabaseItemType.FILE -> -1
+                    a.type == DatabaseItemType.FILE && b.type == DatabaseItemType.DIRECTORY -> 1
+                    else -> compareValues(a.uri, b.uri)
+                }
+            }
     }
 
     override fun cover(uri: String, type: DatabaseCoverType): ByteArray {
