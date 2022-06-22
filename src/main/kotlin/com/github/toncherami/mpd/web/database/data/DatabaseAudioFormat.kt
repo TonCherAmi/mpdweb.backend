@@ -11,9 +11,9 @@ data class DatabaseAudioFormat(val bitDepth: Int, val samplingRate: Int, val num
             }
 
             return DatabaseAudioFormat(
-                bitDepth = parts[1].toInt(),
-                samplingRate = parts[0].toInt(),
-                numberOfChannels = parts[2].toInt()
+                bitDepth = parts[1].toIntOrNull() ?: -1,
+                samplingRate = parts[0].toIntOrNull() ?: -1,
+                numberOfChannels = parts[2].toIntOrNull() ?: -1,
             )
         }
     }
