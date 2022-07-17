@@ -1,12 +1,6 @@
 server:
   port: 8080
 
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/mpdweb
-    username: postgres
-    password: qwerty
-
 mpd:
   host: localhost
   port: 6600
