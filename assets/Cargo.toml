@@ -1,0 +1,10 @@
+[package]
+name = "assets"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+quote = "1.0"
+
+[lib]
+proc-macro = true

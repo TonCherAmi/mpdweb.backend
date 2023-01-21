@@ -1,0 +1,47 @@
+###
+# @name Get database contents
+GET {{server}}/database?uri=/metal
+
+###
+# @name Get database cover art
+GET {{server}}/database/cover?uri=/metal&kind=file
+
+###
+# @name Get database count
+GET {{server}}/database/count?uri=/metal
+
+###
+# @name Get playlists
+GET {{server}}/playlists
+
+###
+# @name Get playlist contents
+GET {{server}}/playlists/Playlist Name
+
+###
+# @name Delete playlist
+DELETE {{server}}/playlists/Playlist Name
+
+###
+# @name Delete playlist contents
+DELETE {{server}}/playlists/Playlist Name
+Content-Type: application/json
+
+{
+  "positions": [1, 2, 3]
+}
+
+###
+# @name WebSocket
+WEBSOCKET ws://{{server}}/ws
+Content-Type: application/json
+
+=== wait-for-server
+{
+  "id": "",
+  "content": {
+    "update": {
+      "uri": "ambient/Warmth"
+    }
+  }
+}

@@ -4,13 +4,15 @@ This repository houses the backend part of [MPDWeb](https://github.com/toncheram
 
 ## Stack
 
-- Spring Boot
-- Kotlin
-- Gradle
+- rust
+- tokio
+- axum
+- serde
+- tracing
 
 ## Development
 
-To start the server run `./gradlew bootRun` in project root.
+To start the server run `cargo run`.
 
 By default, MPD is expected to be available at `localhost:6600`.
 
