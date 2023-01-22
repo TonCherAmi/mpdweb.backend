@@ -1,20 +1,13 @@
-use std::convert;
 use std::future::Future;
-use std::iter::Iterator;
-use std::ops::ControlFlow;
 use std::result;
-use std::time::Duration;
 
 use tokio::sync::mpsc;
 use tokio::sync::watch;
-use tokio::time;
 
 use crate::mpd::action::Action;
-use crate::mpd::client;
 use crate::mpd::client::Client;
 use crate::mpd::client::ConnectError;
 use crate::mpd::data::Subsystem;
-use crate::mpd::error::Error;
 use crate::mpd::result::Result;
 
 pub struct Manager<T: Fn() -> F, F: Future<Output=result::Result<Client, ConnectError>>> {
@@ -39,10 +32,25 @@ pub async fn run<T, F>(mut manager: Manager<T, F>)
 }
 
 mod recv {
-    use crate::mpd::data::to_subsystems;
-    use crate::mpd::service::Service;
+    use super::Action;
+    use super::Client;
+    use super::ConnectError;
+    use super::Future;
+    use super::Manager;
+    use super::Result;
+    use super::Subsystem;
+    use super::result;
 
-    use super::*;
+    use std::convert;
+    use std::time::Duration;
+    use std::ops::ControlFlow;
+
+    use tokio::time;
+
+    use crate::mpd::client;
+    use crate::mpd::service::Service;
+    use crate::mpd::error::Error;
+    use crate::mpd::data::to_subsystems;
 
     const IDLE_SUBSYSTEMS: &[Subsystem] = &[
         Subsystem::Database,

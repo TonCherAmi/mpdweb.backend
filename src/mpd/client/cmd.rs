@@ -38,7 +38,7 @@ trait ToStringOrEmpty<T: ToString> {
 
 impl<T: ToString> ToStringOrEmpty<T> for Option<T> {
     fn to_string_or_empty(&self) -> String {
-        self.as_ref().map(|x| x.to_string())
+        self.as_ref().map(ToString::to_string)
             .unwrap_or_else(|| "".to_owned())
     }
 }
@@ -51,7 +51,7 @@ fn escape(arg: &str) -> String {
             result.push('\\');
         }
 
-        result.push(c)
+        result.push(c);
     }
 
     result

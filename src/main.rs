@@ -1,3 +1,16 @@
+#![warn(clippy::print_stdout)]
+#![warn(clippy::if_then_some_else_none)]
+#![warn(clippy::match_wildcard_for_single_variants)]
+#![deny(clippy::empty_structs_with_brackets)]
+#![deny(clippy::mod_module_files)]
+#![deny(clippy::needless_collect)]
+#![deny(clippy::needless_continue)]
+#![deny(clippy::redundant_else)]
+#![deny(clippy::redundant_closure_for_method_calls)]
+#![deny(clippy::semicolon_if_nothing_returned)]
+#![warn(clippy::unwrap_used)]
+#![deny(clippy::wildcard_imports)]
+
 use std::collections::HashMap;
 use std::net::SocketAddr;
 
