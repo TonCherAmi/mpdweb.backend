@@ -70,7 +70,7 @@ impl Default for Config {
                 password: None,
             },
             server: Server {
-                bind: "0.0.0.0".to_owned(),
+                bind: "127.0.0.1".to_owned(),
                 port: 8989,
             },
             logging: Logging {
@@ -123,7 +123,7 @@ mod tests {
         port = 6600
 
         [server]
-        bind = "0.0.0.0"
+        bind = "127.0.0.1"
         port = 8989
 
         [logging]
