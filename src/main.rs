@@ -8,7 +8,6 @@
 #![deny(clippy::redundant_else)]
 #![deny(clippy::redundant_closure_for_method_calls)]
 #![deny(clippy::semicolon_if_nothing_returned)]
-#![warn(clippy::unwrap_used)]
 #![deny(clippy::wildcard_imports)]
 
 use std::collections::HashMap;
