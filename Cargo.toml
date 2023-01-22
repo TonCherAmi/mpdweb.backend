@@ -3,6 +3,8 @@ name = "mpdweb"
 version = "0.2.0"
 edition = "2021"
 license = "MIT"
+readme = "README.md"
+repository = "https://github.com/TonCherAmi/mpdweb.backend"
 
 [dependencies]
 axum = { version = "0.6", features = ["ws"] }
