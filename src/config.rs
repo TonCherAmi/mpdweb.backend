@@ -12,6 +12,7 @@ use tokio::io;
 use tracing::Level;
 
 #[derive(Deserialize)]
+#[serde(default, deny_unknown_fields)]
 #[cfg_attr(test, derive(Debug, Eq, PartialEq))]
 pub struct Mpd {
     pub host: String,
@@ -19,11 +20,31 @@ pub struct Mpd {
     pub password: Option<String>,
 }
 
+impl Default for Mpd {
+    fn default() -> Self {
+        Mpd {
+            host: "localhost".to_owned(),
+            port: 6600,
+            password: None,
+        }
+    }
+}
+
 #[derive(Deserialize)]
+#[serde(default, deny_unknown_fields)]
 #[cfg_attr(test, derive(Debug, Eq, PartialEq))]
 pub struct Server {
     pub bind: String,
     pub port: u32,
+}
+
+impl Default for Server {
+    fn default() -> Self {
+        Server {
+            bind: "127.0.0.1".to_owned(),
+            port: 8989,
+        }
+    }
 }
 
 fn deserialize_level<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Level, D::Error> {
@@ -46,38 +67,28 @@ fn deserialize_level<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Level
 }
 
 #[derive(Deserialize)]
+#[serde(default, deny_unknown_fields)]
 #[cfg_attr(test, derive(Debug, Eq, PartialEq))]
 pub struct Logging {
     #[serde(deserialize_with = "deserialize_level")]
     pub level: Level,
 }
 
-#[derive(Deserialize)]
+impl Default for Logging {
+    fn default() -> Self {
+        Logging {
+            level: Level::INFO,
+        }
+    }
+}
+
+#[derive(Default, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 #[cfg_attr(test, derive(Debug, Eq, PartialEq))]
 pub struct Config {
     pub mpd: Mpd,
     pub server: Server,
     pub logging: Logging,
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Config {
-            mpd: Mpd {
-                host: "localhost".to_owned(),
-                port: 6600,
-                password: None,
-            },
-            server: Server {
-                bind: "127.0.0.1".to_owned(),
-                port: 8989,
-            },
-            logging: Logging {
-                level: Level::INFO,
-            },
-        }
-    }
 }
 
 fn path() -> Result<PathBuf, String> {
@@ -130,11 +141,24 @@ mod tests {
         level = "info"
     "#;
 
-    const CUSTOM_CONFIG: &str = r#"
+    const CUSTOM_CONFIG1: &str = r#"
         [mpd]
         host = "10.0.0.1"
         port = 6601
         password = "qwerty"
+
+        [logging]
+        level = "trace"
+    "#;
+
+    const CUSTOM_CONFIG2: &str = r#"
+        [mpd]
+        host = "10.0.0.1"
+    "#;
+
+    const CUSTOM_CONFIG3: &str = r#"
+        [server]
+        bind = "172.31.0.1"
 
         [logging]
         level = "trace"
@@ -155,14 +179,43 @@ mod tests {
     }
 
     #[test]
-    fn should_parse_custom_config() {
-        let result = toml::from_str::<Config>(CUSTOM_CONFIG).unwrap();
+    fn should_parse_custom_config1() {
+        let result = toml::from_str::<Config>(CUSTOM_CONFIG1).unwrap();
 
         assert_eq!(result, Config {
             mpd: Mpd {
                 host: "10.0.0.1".to_owned(),
                 port: 6601,
                 password: Some("qwerty".to_owned()),
+            },
+            logging: Logging {
+                level: Level::TRACE,
+            },
+            ..Config::default()
+        });
+    }
+
+    #[test]
+    fn should_parse_custom_config2() {
+        let result = toml::from_str::<Config>(CUSTOM_CONFIG2).unwrap();
+
+        assert_eq!(result, Config {
+            mpd: Mpd {
+                host: "10.0.0.1".to_owned(),
+                ..Mpd::default()
+            },
+            ..Config::default()
+        });
+    }
+
+    #[test]
+    fn should_parse_custom_config3() {
+        let result = toml::from_str::<Config>(CUSTOM_CONFIG3).unwrap();
+
+        assert_eq!(result, Config {
+            server: Server {
+                bind: "172.31.0.1".to_owned(),
+                ..Server::default()
             },
             logging: Logging {
                 level: Level::TRACE,
