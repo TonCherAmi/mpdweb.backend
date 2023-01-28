@@ -13,11 +13,9 @@ use crate::route::ws::proto::Request;
 use crate::route::ws::proto::Status;
 use crate::route::ws::proto::Update;
 use crate::route::ws::proto::UpdateKind;
-use crate::route::ws::sub::Subscription;
 
 mod data;
 mod proto;
-mod sub;
 mod action;
 
 const UNKNOWN_ID: &str = "unknown";
@@ -154,8 +152,8 @@ impl Handle {
     }
 }
 
-impl From<mpd::Result<Vec<sub::Update>>> for Update {
-    fn from(updates: mpd::Result<Vec<sub::Update>>) -> Self {
+impl From<mpd::Result<Vec<mpd::Update>>> for Update {
+    fn from(updates: mpd::Result<Vec<mpd::Update>>) -> Self {
         match updates {
             Ok(updates) => {
                 Update::from_data(updates.into_iter().map(Into::into).collect())
@@ -167,10 +165,12 @@ impl From<mpd::Result<Vec<sub::Update>>> for Update {
     }
 }
 
-async fn handle_upgrade(socket: WebSocket, handle: mpd::Handle) -> Result<()> {
+async fn handle_upgrade(
+    socket: WebSocket,
+    handle: mpd::Handle,
+    mut sub_handle: mpd::SubscriptionHandle,
+) -> Result<()> {
     let mut socket = Socket::new(socket);
-
-    let mut sub = Subscription::new(handle.clone());
 
     let handle = Handle::new(handle);
 
@@ -178,7 +178,7 @@ async fn handle_upgrade(socket: WebSocket, handle: mpd::Handle) -> Result<()> {
 
     loop {
         tokio::select! {
-            updates = sub.updates() => {
+            updates = sub_handle.updates() => {
                 socket.send(Out::update(updates.into())).await?;
             },
             msg = socket.recv() => {
@@ -209,13 +209,14 @@ async fn handle_upgrade(socket: WebSocket, handle: mpd::Handle) -> Result<()> {
     }
 }
 
-#[tracing::instrument(skip(ws, handle), level = "debug")]
+#[tracing::instrument(skip(ws, handle, sub_handle), level = "debug")]
 pub async fn websocket(
     ws: WebSocketUpgrade,
     Extension(handle): Extension<mpd::Handle>,
+    Extension(sub_handle): Extension<mpd::SubscriptionHandle>,
 ) -> impl IntoResponse {
     ws.on_upgrade(|socket| async {
-        match handle_upgrade(socket, handle).await {
+        match handle_upgrade(socket, handle, sub_handle).await {
             Ok(_) => tracing::debug!("connection closed"),
             Err(err) => tracing::debug!("connection closed with error: {err}"),
         };

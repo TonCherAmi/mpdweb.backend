@@ -8,7 +8,6 @@ use serde_json as json;
 use crate::mpd;
 use crate::route::ws::action::Action;
 use crate::route::ws::data;
-use crate::route::ws::sub;
 
 #[derive(Deserialize)]
 pub struct Request<T> {
@@ -131,6 +130,25 @@ pub enum UpdateKind {
     Queue(Vec<data::QueueItem>),
 }
 
+impl From<mpd::Update> for UpdateKind {
+    fn from(upd: mpd::Update) -> Self {
+        match upd {
+            mpd::Update::Db => {
+                UpdateKind::Db
+            },
+            mpd::Update::Playlists => {
+                UpdateKind::Playlists
+            },
+            mpd::Update::Status(status) => {
+                UpdateKind::Status(status.into())
+            },
+            mpd::Update::Queue(queue) => {
+                UpdateKind::Queue(queue.into_iter().map(Into::into).collect())
+            },
+        }
+    }
+}
+
 impl From<mpd::Error> for Status {
     fn from(err: mpd::Error) -> Self {
         let code = match &err {
@@ -153,25 +171,6 @@ impl From<mpd::Error> for Update {
         Update {
             items: None,
             status: err.into(),
-        }
-    }
-}
-
-impl From<sub::Update> for UpdateKind {
-    fn from(upd: sub::Update) -> Self {
-        match upd {
-            sub::Update::Db => {
-                UpdateKind::Db
-            },
-            sub::Update::Playlists => {
-                UpdateKind::Playlists
-            },
-            sub::Update::Status(status) => {
-                UpdateKind::Status(status.into())
-            },
-            sub::Update::Queue(queue) => {
-                UpdateKind::Queue(queue.into_iter().map(Into::into).collect())
-            },
         }
     }
 }

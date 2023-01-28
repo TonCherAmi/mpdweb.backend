@@ -4,7 +4,7 @@ use std::time::Duration;
 use crate::mpd::client;
 use crate::mpd::Error;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum PlaybackState {
     Playing,
     Stopped,
@@ -26,7 +26,7 @@ impl TryFrom<String> for PlaybackState {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum OneshotState {
     On,
     Off,
@@ -66,7 +66,7 @@ impl OneshotState {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct SongStatus {
     pub id: i64,
     pub position: i64,
@@ -74,12 +74,12 @@ pub struct SongStatus {
     pub duration: Duration,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct QueueStatus {
     pub length: usize,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Status {
     pub volume: i8,
     pub repeat: bool,
@@ -209,16 +209,16 @@ impl From<client::DbCount> for DbCount {
     }
 }
 
-#[derive(Debug)]
-#[cfg_attr(test, derive(Clone, Eq, PartialEq))]
+#[derive(Debug, Clone)]
+#[cfg_attr(test, derive(Eq, PartialEq))]
 pub struct DbAudioFormat {
     pub bit_depth: i64,
     pub sampling_rate: i64,
     pub number_of_channels: i64,
 }
 
-#[derive(Debug)]
-#[cfg_attr(test, derive(Clone, Eq, PartialEq))]
+#[derive(Debug, Clone)]
+#[cfg_attr(test, derive(Eq, PartialEq))]
 pub struct DbTags {
     pub titles: Vec<String>,
     pub artists: Vec<String>,
@@ -304,7 +304,7 @@ impl DbItem {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct QueueItem {
     pub id: i64,
     pub position: i64,

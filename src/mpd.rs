@@ -16,6 +16,8 @@ pub use data::Subsystem;
 pub use error::Error;
 pub use handle::Handle;
 pub use result::Result;
+pub use sub::Update;
+pub use sub::SubscriptionHandle;
 
 mod client;
 mod handle;
@@ -25,3 +27,4 @@ mod data;
 mod service;
 mod result;
 mod error;
+mod sub;

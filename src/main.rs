@@ -53,6 +53,8 @@ async fn main() -> Result<(), String> {
         }
     });
 
+    let sub_handle = mpd::SubscriptionHandle::new(handle.clone());
+
     let api = Router::new()
         .route("/ws", get(route::ws::websocket))
         .route("/database", get(route::db::database))
@@ -61,7 +63,8 @@ async fn main() -> Result<(), String> {
         .route("/playlists", get(route::playlists::playlists))
         .route("/playlists/:name", get(route::playlists::playlist).delete(route::playlists::delete))
         .route("/playlists/:name/songs", delete(route::playlists::delete_songs))
-        .layer(Extension(handle));
+        .layer(Extension(handle))
+        .layer(Extension(sub_handle));
 
     let app = Router::new()
         .nest("/api", api);
