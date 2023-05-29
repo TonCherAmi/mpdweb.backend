@@ -27,6 +27,7 @@ pub async fn playlist(
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Playlist {
     name: String,
     updated_at: String,
