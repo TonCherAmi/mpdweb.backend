@@ -23,4 +23,6 @@ serde_bytes = "0.11"
 
 toml = "0.5.10"
 
+sqlx = { version = "0.6.2", features = ["sqlite", "migrate", "runtime-tokio-native-tls"] }
+
 assets = { path = "./assets" }

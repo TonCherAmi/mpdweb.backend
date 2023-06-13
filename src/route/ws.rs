@@ -32,7 +32,6 @@ impl Socket {
     }
 }
 
-
 impl Socket {
     async fn send<T: Into<Message>>(&mut self, payload: T) -> Result<()> {
         self.inner.send(payload.into()).await

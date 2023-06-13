@@ -19,6 +19,8 @@ use axum::Router;
 use axum::routing::delete;
 use axum::routing::get;
 use hyper::Server;
+use sqlx::migrate::Migrator;
+use sqlx::SqlitePool;
 
 mod config;
 mod mpd;
@@ -26,8 +28,14 @@ mod route;
 mod time;
 mod tracing;
 
+static MIGRATOR: Migrator = sqlx::migrate!();
+
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), String> {
+    let pool = SqlitePool::connect("sqlite:test.db").await.unwrap();
+
+    MIGRATOR.run(&pool).await.unwrap();
+
     let handle = tracing::init();
 
     let config = config::read().await?;

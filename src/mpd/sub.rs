@@ -5,7 +5,6 @@ use crate::mpd::data::Status;
 use crate::mpd::handle::Handle;
 use crate::mpd::result::Result;
 
-#[derive(Clone)]
 pub struct SubscriptionHandle {
     updates_rx: watch::Receiver<Result<Vec<Update>>>
 }
@@ -17,6 +16,16 @@ impl SubscriptionHandle {
         let recv_loop = recv::RecvLoop::new(handle, updates_tx);
 
         tokio::spawn(recv::run(recv_loop));
+
+        SubscriptionHandle { updates_rx }
+    }
+}
+
+impl Clone for SubscriptionHandle {
+    fn clone(&self) -> Self {
+        let mut updates_rx = self.updates_rx.clone();
+
+        updates_rx.borrow_and_update();
 
         SubscriptionHandle { updates_rx }
     }
@@ -36,9 +45,6 @@ pub enum Update {
     Playlists,
     Status(Status),
     Queue(Vec<QueueItem>),
-}
-
-impl SubscriptionHandle {
 }
 
 mod recv {
