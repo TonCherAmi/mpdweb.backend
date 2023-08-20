@@ -45,8 +45,8 @@ impl error::Error for Error {
 type Result<T> = result::Result<T, Error>;
 
 impl From<io::Error> for Error {
-    fn from(error: io::Error) -> Self {
-        Error::Io(error)
+    fn from(err: io::Error) -> Self {
+        Error::Io(err)
     }
 }
 

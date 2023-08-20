@@ -27,14 +27,14 @@ pub enum Error {
 type Result<T> = result::Result<T, Error>;
 
 impl From<ParseIntError> for Error {
-    fn from(error: ParseIntError) -> Self {
-        Error::InvalidEncoding(error.to_string())
+    fn from(err: ParseIntError) -> Self {
+        Error::InvalidEncoding(err.to_string())
     }
 }
 
 impl From<Utf8Error> for Error {
-    fn from(error: Utf8Error) -> Self {
-        Error::InvalidEncoding(error.to_string())
+    fn from(err: Utf8Error) -> Self {
+        Error::InvalidEncoding(err.to_string())
     }
 }
 

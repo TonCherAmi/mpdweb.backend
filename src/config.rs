@@ -11,6 +11,8 @@ use tokio::fs;
 use tokio::io;
 use tracing::Level;
 
+use crate::args::Args;
+
 #[derive(Deserialize)]
 #[serde(default, deny_unknown_fields)]
 #[cfg_attr(test, derive(Debug, Eq, PartialEq))]
@@ -82,6 +84,28 @@ impl Default for Logging {
     }
 }
 
+#[derive(Deserialize)]
+#[serde(default, deny_unknown_fields)]
+#[cfg_attr(test, derive(Debug, Eq, PartialEq))]
+pub struct Database {
+    pub path: PathBuf,
+}
+
+impl Default for Database {
+    fn default() -> Self {
+        let path = env::var("XDG_DATA_HOME")
+            .or_else(|_| {
+                env::var("HOME")
+                    .map(|home| home.add("./local/share"))
+            })
+            .map(|dir| dir.add("/mpdweb/database"))
+            .map(PathBuf::from)
+            .expect("expected to be able to read environment");
+
+        Database { path }
+    }
+}
+
 #[derive(Default, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 #[cfg_attr(test, derive(Debug, Eq, PartialEq))]
@@ -89,6 +113,7 @@ pub struct Config {
     pub mpd: Mpd,
     pub server: Server,
     pub logging: Logging,
+    pub database: Database,
 }
 
 fn path() -> Result<PathBuf, String> {
@@ -103,15 +128,18 @@ fn path() -> Result<PathBuf, String> {
     Ok(PathBuf::from(result))
 }
 
-pub async fn read() -> Result<Config, String> {
-    let path = path()?;
+pub async fn read(args: &Args) -> Result<Config, String> {
+    let path = match &args.config {
+        Some(path) => PathBuf::from(path),
+        _ => path()?,
+    };
 
     match fs::read_to_string(&path).await {
         Ok(contents) => {
             toml::from_str(&contents)
                 .map_err(|e| format!("failed to parse config at '{}': {e}", path.display()))
         },
-        Err(err) if err.kind() == io::ErrorKind::NotFound => {
+        Err(err) if err.kind() == io::ErrorKind::NotFound  && args.config.is_none() => {
             tracing::debug!("config not found at '{}', using default values", path.display());
 
             Ok(Config::default())
@@ -154,6 +182,9 @@ mod tests {
     const CUSTOM_CONFIG2: &str = r#"
         [mpd]
         host = "10.0.0.1"
+
+        [database]
+        path = "/home/user/.data/mpdweb/db"
     "#;
 
     const CUSTOM_CONFIG3: &str = r#"
@@ -203,6 +234,9 @@ mod tests {
             mpd: Mpd {
                 host: "10.0.0.1".to_owned(),
                 ..Mpd::default()
+            },
+            database: Database {
+                path: PathBuf::from("/home/user/.data/mpdweb/db")
             },
             ..Config::default()
         });

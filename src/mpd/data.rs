@@ -1,6 +1,8 @@
 use std::str::FromStr;
-use std::time::Duration;
 
+use time::Duration;
+
+use crate::convert::IntoResult;
 use crate::mpd::client;
 use crate::mpd::Error;
 
@@ -117,8 +119,8 @@ impl TryFrom<client::Status> for Status {
                     Some(SongStatus {
                         id,
                         position,
-                        elapsed: Duration::from_secs_f64(elapsed),
-                        duration: Duration::from_secs_f64(duration),
+                        elapsed: Duration::seconds_f64(elapsed),
+                        duration: Duration::seconds_f64(duration),
                     })
                 }
                 _ => None,
@@ -204,7 +206,7 @@ impl From<client::DbCount> for DbCount {
     fn from(count: client::DbCount) -> Self {
         DbCount {
             nsongs: count.songs,
-            playtime: Duration::from_secs(count.playtime),
+            playtime: Duration::seconds(count.playtime),
         }
     }
 }
@@ -266,7 +268,7 @@ impl TryFrom<client::DbItem> for DbItem {
     fn try_from(value: client::DbItem) -> Result<Self, Self::Error> {
         use client::DbItem::*;
 
-        let result = match value {
+        match value {
             File {
                 file,
                 duration,
@@ -277,7 +279,7 @@ impl TryFrom<client::DbItem> for DbItem {
             } => {
                 DbItem::File {
                     uri: file,
-                    duration: duration.map(Duration::from_secs_f64),
+                    duration: duration.map(Duration::seconds_f64),
                     tags: DbTags {
                         titles: title,
                         artists: artist,
@@ -288,9 +290,7 @@ impl TryFrom<client::DbItem> for DbItem {
             }
             Directory { directory } => DbItem::Directory { uri: directory },
             Playlist { playlist } => DbItem::Playlist { uri: playlist },
-        };
-
-        Ok(result)
+        }.into_ok()
     }
 }
 
@@ -329,20 +329,18 @@ impl TryFrom<client::PlaylistItem> for QueueItem {
             format,
         }: client::PlaylistItem
     ) -> Result<Self, Self::Error> {
-        let result = QueueItem {
+        QueueItem {
             id,
             position: pos,
             uri: file,
-            duration: Duration::from_secs_f64(duration),
+            duration: Duration::seconds_f64(duration),
             tags: DbTags {
                 titles: title,
                 artists: artist,
                 albums: album,
             },
             format: format.map(|s| s.parse()).transpose()?,
-        };
-
-        Ok(result)
+        }.into_ok()
     }
 }
 

@@ -21,8 +21,10 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_bytes = "0.11"
 
-toml = "0.5.10"
+toml = "0.7"
 
-sqlx = { version = "0.6.2", features = ["sqlite", "migrate", "runtime-tokio-native-tls"] }
+time = { version = "0.3", features = ["formatting", "parsing", "serde"] }
+
+sqlx = { version = "0.6", features = ["sqlite", "migrate", "runtime-tokio-native-tls"] }
 
 assets = { path = "./assets" }

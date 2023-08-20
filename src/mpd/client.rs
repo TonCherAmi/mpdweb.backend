@@ -169,7 +169,7 @@ pub struct Change {
 #[derive(Deserialize)]
 pub struct DbCount {
     pub songs: i64,
-    pub playtime: u64,
+    pub playtime: i64,
 }
 
 pub enum DbItem {

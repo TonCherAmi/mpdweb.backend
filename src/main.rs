@@ -12,6 +12,7 @@
 
 use std::collections::HashMap;
 use std::net::SocketAddr;
+use std::process;
 
 use assets::assets;
 use axum::Extension;
@@ -19,28 +20,37 @@ use axum::Router;
 use axum::routing::delete;
 use axum::routing::get;
 use hyper::Server;
-use sqlx::migrate::Migrator;
-use sqlx::SqlitePool;
 
+mod args;
 mod config;
 mod mpd;
 mod route;
 mod time;
 mod tracing;
-
-static MIGRATOR: Migrator = sqlx::migrate!();
+mod persist;
+mod history;
+mod convert;
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), String> {
-    let pool = SqlitePool::connect("sqlite:test.db").await.unwrap();
+    let args = match args::read() {
+        Ok(args) => args,
+        Err(usage) => {
+            eprintln!("{}", usage);
 
-    MIGRATOR.run(&pool).await.unwrap();
+            process::exit(1);
+        }
+    };
+
+    let config = config::read(&args).await?;
+
+    let persistence_handle = persist::init(config.database.path).await?;
 
     let handle = tracing::init();
 
-    let config = config::read().await?;
-
     handle.set_level(config.logging.level)?;
+
+    let history_handle = history::Handle::new(persistence_handle.clone());
 
     let handle = mpd::Handle::new(move || {
         let host = config.mpd.host.clone();
@@ -63,6 +73,12 @@ async fn main() -> Result<(), String> {
 
     let sub_handle = mpd::SubscriptionHandle::new(handle.clone());
 
+    history::keeper::run(
+        handle.clone(),
+        sub_handle.clone(),
+        persistence_handle.clone(),
+    );
+
     let api = Router::new()
         .route("/ws", get(route::ws::websocket))
         .route("/database", get(route::db::database))
@@ -71,8 +87,10 @@ async fn main() -> Result<(), String> {
         .route("/playlists", get(route::playlists::playlists))
         .route("/playlists/:name", get(route::playlists::playlist).delete(route::playlists::delete))
         .route("/playlists/:name/songs", delete(route::playlists::delete_songs))
+        .route("/history", get(route::history::history))
         .layer(Extension(handle))
-        .layer(Extension(sub_handle));
+        .layer(Extension(sub_handle))
+        .layer(Extension(history_handle));
 
     let app = Router::new()
         .nest("/api", api);

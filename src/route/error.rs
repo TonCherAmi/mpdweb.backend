@@ -18,9 +18,15 @@ impl Error {
     }
 }
 
+impl From<String> for Error {
+    fn from(msg: String) -> Self {
+        Error::new(StatusCode::INTERNAL_SERVER_ERROR, msg)
+    }
+}
+
 impl From<mpd::Error> for Error {
-    fn from(error: mpd::Error) -> Self {
-        let (code, message) = match error {
+    fn from(err: mpd::Error) -> Self {
+        let (code, message) = match err {
             mpd::Error::Internal(msg) => {
                 (StatusCode::INTERNAL_SERVER_ERROR, msg)
             },

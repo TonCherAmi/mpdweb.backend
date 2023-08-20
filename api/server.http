@@ -1,30 +1,30 @@
 ###
-# @name Get database contents
-GET {{server}}/database?uri=/metal
+# @name Get database contents.
+GET {{server}}/api/database?uri=metal
 
 ###
-# @name Get database cover art
-GET {{server}}/database/cover?uri=/metal&kind=file
+# @name Get database cover art.
+GET {{server}}/api/database/cover?uri=metal&kind=file
 
 ###
-# @name Get database count
-GET {{server}}/database/count?uri=/metal
+# @name Get database count.
+GET {{server}}/api/database/count?uri=metal
 
 ###
-# @name Get playlists
-GET {{server}}/playlists
+# @name Get playlists.
+GET {{server}}/api/playlists
 
 ###
-# @name Get playlist contents
-GET {{server}}/playlists/Playlist Name
+# @name Get playlist contents.
+GET {{server}}/api/playlists/Playlist Name
 
 ###
-# @name Delete playlist
-DELETE {{server}}/playlists/Playlist Name
+# @name Delete playlist.
+DELETE {{server}}/api/playlists/Playlist Name
 
 ###
-# @name Delete playlist contents
-DELETE {{server}}/playlists/Playlist Name
+# @name Delete playlist contents.
+DELETE {{server}}/api/playlists/Playlist Name
 Content-Type: application/json
 
 {
@@ -32,7 +32,11 @@ Content-Type: application/json
 }
 
 ###
-# @name WebSocket
+# @name Get history.
+GET {{server}}/api/history?from=2023-05-13T09:30:00-05:00
+
+###
+# @name WebSocket endpoint.
 WEBSOCKET ws://{{server}}/ws
 Content-Type: application/json
 
