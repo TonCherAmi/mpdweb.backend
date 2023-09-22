@@ -96,7 +96,7 @@ impl Default for Database {
         let path = env::var("XDG_DATA_HOME")
             .or_else(|_| {
                 env::var("HOME")
-                    .map(|home| home.add("./local/share"))
+                    .map(|home| home.add("/.local/share"))
             })
             .map(|dir| dir.add("/mpdweb/database"))
             .map(PathBuf::from)
