@@ -33,11 +33,11 @@ pub struct DbService<'a> {
 }
 
 fn file_filter(query: &str) -> String {
-    format!("(file =~ '{query}')")
+    format!(r#"(file =~ "{query}")"#)
 }
 
 fn base_filter(uri: &str) -> String {
-    format!("(base '{uri}')")
+    format!(r#"(base "{uri}")"#)
 }
 
 // Since MPD does not allow us to search for directories we go over
