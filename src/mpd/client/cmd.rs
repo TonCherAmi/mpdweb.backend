@@ -43,7 +43,7 @@ impl<T: ToString> ToStringOrEmpty<T> for Option<T> {
     }
 }
 
-fn escape(arg: &str) -> String {
+pub fn escape(arg: &str) -> String {
     let mut result = String::with_capacity(arg.len());
 
     for c in arg.chars() {

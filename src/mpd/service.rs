@@ -7,6 +7,7 @@ use bytes::BytesMut;
 use crate::mpd::action::CoverArtKind;
 use crate::mpd::action::QueueSource;
 use crate::mpd::client::Binary;
+use crate::mpd::client::escape;
 use crate::mpd::client::Client;
 use crate::mpd::data::DbCount;
 use crate::mpd::data::DbItem;
@@ -33,10 +34,14 @@ pub struct DbService<'a> {
 }
 
 fn file_filter(query: &str) -> String {
+    let query = escape(query);
+
     format!(r#"(file =~ "{query}")"#)
 }
 
 fn base_filter(uri: &str) -> String {
+    let uri = escape(uri);
+
     format!(r#"(base "{uri}")"#)
 }
 

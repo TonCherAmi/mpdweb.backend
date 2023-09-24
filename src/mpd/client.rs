@@ -19,6 +19,7 @@ use crate::mpd::client::cmd::Command;
 use crate::mpd::client::conn::Connection;
 pub use crate::mpd::client::conn::Error as ConnectionError;
 use crate::mpd::client::frame::Frame;
+pub use crate::mpd::client::cmd::escape;
 
 mod cmd;
 mod conn;
