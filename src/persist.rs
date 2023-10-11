@@ -312,11 +312,10 @@ pub struct Handle {
 static MIGRATOR: Migrator = sqlx::migrate!();
 
 pub async fn init(path: PathBuf) -> Result<Handle> {
-    let mut options = SqliteConnectOptions::from_str(format!("sqlite://{}", path.display()).as_str())?
+    let options = SqliteConnectOptions::from_str(format!("sqlite://{}", path.display()).as_str())?
         .journal_mode(SqliteJournalMode::Wal)
-        .create_if_missing(true);
-
-    options.log_statements(LevelFilter::Warn);
+        .create_if_missing(true)
+        .log_statements(LevelFilter::Warn);
 
     let pool = SqlitePool::connect_with(options).await?;
 
