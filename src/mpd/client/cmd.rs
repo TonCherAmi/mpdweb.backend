@@ -12,7 +12,7 @@ pub enum Command {
     Deleteid { songid: i64 },
     Count { filter: String },
     Lsinfo { uri: String },
-    Search { filter: String },
+    Search { filter: String, sort: Option<String> },
     Playlistinfo,
     Listplaylistinfo { name: String },
     Rm { name: String },
@@ -145,8 +145,10 @@ impl Command {
             Lsinfo { uri } => {
                 format!("{} {}", Command::LSINFO_VALUE, quote(&uri))
             }
-            Search { filter } => {
-                format!("{} {}", Command::SEARCH_VALUE, quote(&filter))
+            Search { filter, sort } => {
+                let sort = sort.map(|s| format!("sort {s}")).to_string_or_empty();
+
+                format!("{} {} {}", Command::SEARCH_VALUE, quote(&filter), sort)
             }
             Status => {
                 Command::STATUS_VALUE.to_owned()
@@ -256,10 +258,11 @@ mod tests {
 
     #[test]
     fn should_construct_find() {
-        let expected = r#"search "(Artist == \"foo\\'bar\\\"\")""#;
+        let expected = r#"search "(Artist == \"foo\\'bar\\\"\")" sort Last-Modified"#;
 
         let actual = Command::Search {
-            filter: r#"(Artist == "foo\'bar\"")"#.to_owned()
+            filter: r#"(Artist == "foo\'bar\"")"#.to_owned(),
+            sort: Some("Last-Modified".to_owned()),
         }.into_prepared();
 
         assert_eq!(actual, expected);

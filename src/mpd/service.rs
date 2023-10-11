@@ -3,12 +3,18 @@ use std::cmp::Ordering;
 use bytes::BufMut;
 use bytes::Bytes;
 use bytes::BytesMut;
+use time::Duration;
+use time::format_description;
+use time::OffsetDateTime;
 
+use crate::convert::IntoOption;
+use crate::convert::IntoResult;
 use crate::mpd::action::CoverArtKind;
 use crate::mpd::action::QueueSource;
 use crate::mpd::client::Binary;
-use crate::mpd::client::escape;
+use crate::mpd::client::CommandListClient;
 use crate::mpd::client::Client;
+use crate::mpd::client::escape;
 use crate::mpd::data::DbCount;
 use crate::mpd::data::DbItem;
 use crate::mpd::data::OneshotState;
@@ -43,6 +49,20 @@ fn base_filter(uri: &str) -> String {
     let uri = escape(uri);
 
     format!(r#"(base "{uri}")"#)
+}
+
+fn recents_filter() -> Result<String> {
+    let since = OffsetDateTime::now_utc() - Duration::days(7);
+
+    let since = since.date();
+
+    let format = format_description::parse("[year]-[month]-[day]")
+        .map_err(|e| format!("failed to create format description for modified-since filter: {e}"))?;
+
+    let since = since.format(&format)
+        .map_err(|e| format!("failed to format date for modified-since filter: {e}"))?;
+
+    format!(r#"(modified-since "{since}")"#).into_ok()
 }
 
 // Since MPD does not allow us to search for directories we go over
@@ -115,7 +135,7 @@ impl<'a> DbService<'a> {
     pub async fn search(&mut self, query: String) -> Result<Vec<DbItem>> {
         let query = query.to_lowercase();
 
-        let mut items = self.inner.client.search(file_filter(&query)).await?
+        let mut items = self.inner.client.search(file_filter(&query), None).await?
             .into_iter()
             .map(|it| uri_matches(it.try_into()?, &query))
             .collect::<Result<Vec<_>>>()?
@@ -138,6 +158,17 @@ impl<'a> DbService<'a> {
         items.dedup_by(|a, b| a.uri() == b.uri());
 
         Ok(items)
+    }
+
+    pub async fn recents(&mut self) -> Result<Vec<DbItem>> {
+        let sort = "-Last-Modified".to_owned().into_some();
+
+        let result = self.inner.client.search(recents_filter()?, sort).await?
+            .into_iter()
+            .map(TryInto::try_into)
+            .collect::<Result<_, >>()?;
+
+        Ok(result)
     }
 
     pub async fn update(&mut self, uri: Option<String>) -> Result<()> {
@@ -177,25 +208,38 @@ pub struct QueueService<'a> {
     inner: &'a mut Service<'a>,
 }
 
-impl<'a> QueueService<'a> {
-    pub async fn add(&mut self, source: QueueSource) -> Result<()> {
+impl CommandListClient {
+    fn append(self, source: QueueSource) -> Self {
         match source {
-            QueueSource::File { uri } => self.inner.client.add(uri).await?,
-            QueueSource::Playlist { name } => self.inner.client.load(name).await?,
-        };
+            QueueSource::File { uri } => self.add(uri),
+            QueueSource::Playlist { name } => self.load(name),
+        }
+    }
+}
+
+impl<'a> QueueService<'a> {
+    pub async fn add(&mut self, sources: Vec<QueueSource>) -> Result<()> {
+        self.inner.client
+            .command_list(|mut builder| {
+                for source in sources {
+                    builder = builder.append(source);
+                }
+
+                builder
+            })
+            .await?;
 
         Ok(())
     }
 
-    pub async fn replace(&mut self, source: QueueSource) -> Result<()> {
+    pub async fn replace(&mut self, sources: Vec<QueueSource>) -> Result<()> {
         self.inner.client
             .command_list(|builder| {
-                let builder = builder.clear();
+                let mut builder = builder.clear();
 
-                let builder = match source {
-                    QueueSource::File { uri } => builder.add(uri),
-                    QueueSource::Playlist { name } => builder.load(name),
-                };
+                for source in sources {
+                    builder = builder.append(source);
+                }
 
                 builder.playid(None)
             })
@@ -272,12 +316,16 @@ pub struct PlaylistService<'a> {
 
 impl<'a> PlaylistService<'a> {
     pub async fn get(&mut self, name: String) -> Result<Vec<DbItem>> {
-        let result = self.inner.client.listplaylistinfo(name).await?
+        let (items, errors): (Vec<_>, Vec<_>) = self.inner.client.listplaylistinfo(name).await?
             .into_iter()
             .map(TryInto::try_into)
-            .collect::<Result<_>>()?;
+            .partition(Result::is_ok);
 
-        Ok(result)
+        for error in errors {
+            tracing::warn!(?error);
+        }
+
+        Ok(items.into_iter().map(Result::unwrap).collect())
     }
 
     pub async fn list(&mut self) -> Result<Vec<Playlist>> {
@@ -400,13 +448,14 @@ mod tests {
     fn should_get_uri_matches() {
         let file = DbItem::File {
             uri: "alfa/test/beta/test.flac".to_owned(),
-            duration: None,
+            duration: Duration::seconds(25),
             tags: DbTags {
                 titles: vec!["Test".to_owned()],
                 artists: vec!["Test".to_owned()],
                 albums: vec![],
             },
             format: None,
+            updated_at: "2023-10-01T00:39:58Z".to_owned(),
         };
 
         let actual = uri_matches(file.clone(), "tes").unwrap();
@@ -423,13 +472,14 @@ mod tests {
     fn should_get_no_uri_matches() {
         let file = DbItem::File {
             uri: "alfa/test/beta/test.flac".to_owned(),
-            duration: None,
+            duration: Duration::seconds(55),
             tags: DbTags {
                 titles: vec!["tseT".to_owned()],
                 artists: vec!["tseT".to_owned()],
                 albums: vec![],
             },
             format: None,
+            updated_at: "2023-10-01T00:39:58Z".to_owned(),
         };
 
         let actual = uri_matches(file, "?????").unwrap();

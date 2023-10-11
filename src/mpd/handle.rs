@@ -88,6 +88,7 @@ impl<'a> DbHandle<'a> {
         count(uri: String) -> Result<DbCount> = Action::DbCount;
         search(query: String) -> Result<Vec<DbItem>> = Action::DbSearch;
         update(uri: Option<String>) -> Result<()> = Action::DbUpdate;
+        recents() -> Result<Vec<DbItem>> = Action::DbRecents;
         cover_art(uri: String, kind: CoverArtKind) -> Result<Bytes> = Action::DbCoverArt;
     }
 }
@@ -99,8 +100,8 @@ pub struct QueueHandle<'a> {
 impl<'a> QueueHandle<'a> {
     actions! {
         get() -> Result<Vec<QueueItem>> = Action::QueueGet;
-        add(source: QueueSource) -> Result<()> = Action::QueueAdd;
-        replace(source: QueueSource) -> Result<()> = Action::QueueReplace;
+        add(sources: Vec<QueueSource>) -> Result<()> = Action::QueueAdd;
+        replace(sources: Vec<QueueSource>) -> Result<()> = Action::QueueReplace;
         clear() -> Result<()> = Action::QueueClear;
         remove(id: i64) -> Result<()> = Action::QueueRemove;
         next() -> Result<()> = Action::QueueNext;

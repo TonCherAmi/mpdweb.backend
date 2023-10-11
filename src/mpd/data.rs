@@ -232,9 +232,10 @@ pub struct DbTags {
 pub enum DbItem {
     File {
         uri: String,
-        duration: Option<Duration>,
+        duration: Duration,
         tags: DbTags,
         format: Option<DbAudioFormat>,
+        updated_at: String,
     },
     Directory {
         uri: String,
@@ -276,16 +277,26 @@ impl TryFrom<client::DbItem> for DbItem {
                 artist,
                 album,
                 format,
+                last_modified
             } => {
+                let uri = file.clone();
+
+                let error = |field: &str| -> String {
+                    format!("failed to construct database file with uri '{uri}': missing field '{field}', this likely indicates an issue with the database")
+                };
+
                 DbItem::File {
                     uri: file,
-                    duration: duration.map(Duration::seconds_f64),
+                    duration: duration.map(Duration::seconds_f64).ok_or_else(|| error("duration"))?,
                     tags: DbTags {
                         titles: title,
                         artists: artist,
                         albums: album,
                     },
-                    format: format.map(|s| s.parse()).transpose()?,
+                    format: format
+                        .map(|s| s.parse())
+                        .transpose()?,
+                    updated_at: last_modified.ok_or_else(|| error("last_modified"))?,
                 }
             }
             Directory { directory } => DbItem::Directory { uri: directory },

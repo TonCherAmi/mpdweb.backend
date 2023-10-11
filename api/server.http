@@ -11,6 +11,10 @@ GET {{server}}/api/database/cover?uri=metal&kind=file
 GET {{server}}/api/database/count?uri=metal
 
 ###
+# @name Get database recents.
+GET {{server}}/api/database/recents
+
+###
 # @name Get playlists.
 GET {{server}}/api/playlists
 

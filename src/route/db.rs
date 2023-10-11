@@ -64,11 +64,13 @@ impl From<mpd::DbTags> for DbTags {
 #[derive(Debug, Serialize)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum DbItem {
+    #[serde(rename_all = "camelCase")]
     File {
         uri: String,
-        duration: Option<Duration>,
+        duration: Duration,
         tags: DbTags,
         format: Option<DbAudioFormat>,
+        updated_at: String,
     },
     Directory {
         uri: String,
@@ -88,9 +90,11 @@ impl From<mpd::DbItem> for DbItem {
                 duration,
                 tags,
                 format,
+                updated_at,
             } => DbItem::File {
                 uri,
-                duration: duration.map(Into::into),
+                updated_at,
+                duration: duration.into(),
                 tags: tags.into(),
                 format: format.map(Into::into),
             },
@@ -198,4 +202,14 @@ pub async fn count(
     let result = handle.db().count(params.uri).await?.into();
 
     Ok(Json(result))
+}
+
+pub async fn recents(
+    Extension(handle): Extension<mpd::Handle>,
+) -> Result<Json<Vec<DbItem>>> {
+    let items = handle.db().recents().await?;
+
+    let items = items.into_iter().map(Into::into).collect();
+
+    Ok(Json(items))
 }

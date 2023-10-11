@@ -84,6 +84,7 @@ async fn main() -> Result<(), String> {
         .route("/database", get(route::db::database))
         .route("/database/cover", get(route::db::cover))
         .route("/database/count", get(route::db::count))
+        .route("/database/recents", get(route::db::recents))
         .route("/playlists", get(route::playlists::playlists))
         .route("/playlists/:name", get(route::playlists::playlist).delete(route::playlists::delete))
         .route("/playlists/:name/songs", delete(route::playlists::delete_songs))

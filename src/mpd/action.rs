@@ -38,6 +38,9 @@ pub enum Action {
         query: String,
         response_tx: ResponseSender<Vec<DbItem>>,
     },
+    DbRecents {
+      response_tx: ResponseSender<Vec<DbItem>>,
+    },
     DbUpdate {
         uri: Option<String>,
         response_tx: ResponseSender<()>,
@@ -52,11 +55,11 @@ pub enum Action {
         response_tx: ResponseSender<Vec<QueueItem>>,
     },
     QueueAdd {
-        source: QueueSource,
+        sources: Vec<QueueSource>,
         response_tx: ResponseSender<()>,
     },
     QueueReplace {
-        source: QueueSource,
+        sources: Vec<QueueSource>,
         response_tx: ResponseSender<()>,
     },
     QueueClear {

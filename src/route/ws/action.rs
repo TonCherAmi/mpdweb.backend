@@ -7,8 +7,8 @@ use crate::route::ws::data::OneshotState;
 #[serde(rename_all = "camelCase")]
 pub enum Action {
     DbUpdate { uri: Option<String> },
-    QueueAdd { source: QueueSource },
-    QueueReplace { source: QueueSource },
+    QueueAdd { sources: Vec<QueueSource> },
+    QueueReplace { sources: Vec<QueueSource> },
     QueueClear,
     QueueRemove { id: i64 },
     QueueNext,

@@ -146,6 +146,11 @@ mod recv {
                         response_tx << service.db().search(query).await
                     }
                 },
+                Action::DbRecents { response_tx } => {
+                    send! {
+                        response_tx << service.db().recents().await
+                    }
+                },
                 Action::DbUpdate { uri, response_tx } => {
                     send! {
                         response_tx << service.db().update(uri).await
@@ -162,12 +167,12 @@ mod recv {
                         response_tx << service.queue().get().await
                     }
                 },
-                Action::QueueAdd { source, response_tx } => {
+                Action::QueueAdd { sources: source, response_tx } => {
                     send! {
                         response_tx << service.queue().add(source).await
                     }
                 },
-                Action::QueueReplace { source, response_tx } => {
+                Action::QueueReplace { sources: source, response_tx } => {
                     send! {
                         response_tx << service.queue().replace(source).await
                     }

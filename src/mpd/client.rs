@@ -181,6 +181,7 @@ pub enum DbItem {
         artist: Vec<String>,
         album: Vec<String>,
         format: Option<String>,
+        last_modified: Option<String>,
     },
     Directory {
         directory: String,
@@ -232,6 +233,7 @@ impl<'de> Deserialize<'de> for DbItem {
                         artist: data.remove("Artist").unwrap_or_default(),
                         album: data.remove("Album").unwrap_or_default(),
                         format: data.remove("Format").map(first),
+                        last_modified: data.remove("Last-Modified").map(first)
                     }
                 } else if data.contains_key("directory") {
                     DbItem::Directory {
@@ -324,8 +326,8 @@ macro_rules! commands {
 
 impl Client {
     commands! {
-        add(uri: String) -> Result<()> = Command::Add;
-        load(name: String) -> Result<()> = Command::Load;
+        _add(uri: String) -> Result<()> = Command::Add;
+        _load(name: String) -> Result<()> = Command::Load;
         noidle() -> Result<Vec<Change>> = Command::Noidle;
         clear() -> Result<()> = Command::Clear;
         deleteid(songid: i64) -> Result<()> = Command::Deleteid;
@@ -336,7 +338,7 @@ impl Client {
         previous() -> Result<()> = Command::Previous;
         count(filter: String) -> Result<DbCount> = Command::Count;
         lsinfo(uri: String) -> Result<Vec<DbItem>> = Command::Lsinfo;
-        search(filter: String) -> Result<Vec<DbItem>> = Command::Search;
+        search(filter: String, sort: Option<String>) -> Result<Vec<DbItem>> = Command::Search;
         playlistinfo() -> Result<Vec<PlaylistItem>> = Command::Playlistinfo;
         listplaylists() -> Result<Vec<Playlist>> = Command::Listplaylists;
         listplaylistinfo(name: String) -> Result<Vec<DbItem>> = Command::Listplaylistinfo;

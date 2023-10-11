@@ -6,6 +6,7 @@ use axum::extract::ws::Message;
 use axum::extract::ws::WebSocket;
 use axum::response::IntoResponse;
 
+use crate::convert::MapInto;
 use crate::mpd;
 use crate::route::ws::action::Action;
 use crate::route::ws::proto::Out;
@@ -80,11 +81,11 @@ impl Handle {
                 self.inner.db().update(uri).await
             },
             // Queue actions.
-            Action::QueueAdd { source } => {
-                self.inner.queue().add(source.into()).await
+            Action::QueueAdd { sources } => {
+                self.inner.queue().add(sources.map_into()).await
             },
-            Action::QueueReplace { source } => {
-                self.inner.queue().replace(source.into()).await
+            Action::QueueReplace { sources } => {
+                self.inner.queue().replace(sources.map_into()).await
             },
             Action::QueueClear => {
                 self.inner.queue().clear().await
