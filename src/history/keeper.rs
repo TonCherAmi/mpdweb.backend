@@ -197,7 +197,7 @@ async fn process_initial(
 
             Some(State { event, metadata }).into_ok()
         },
-        Some(state) if is_matching_play(&persistence_handle, state.event.play_id, song).await? => {
+        Some(state) if is_matching_play(persistence_handle, state.event.play_id, song).await? => {
             let is_playback_uninterrupted = (OffsetDateTime::now_utc() - state.event.recorded_at)
                 - (song_status.elapsed - state.event.elapsed)
                 > Duration::seconds(1);
