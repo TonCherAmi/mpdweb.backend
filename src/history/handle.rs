@@ -43,17 +43,18 @@ impl From<(PlaybackHistoryEvent, PlaybackHistoryMetadata)> for HistoryEntry {
 }
 
 impl Handle {
-    pub async fn get(&self,
+    pub async fn get(
+        &self,
         from: Option<OffsetDateTime>,
         to: Option<OffsetDateTime>
     ) -> Result<Vec<HistoryEntry>, String> {
-        let mut xs = self.inner.playback_history_event()
+        let mut events = self.inner.playback_history_event()
             .get_all(from, to).await?;
 
-        xs.dedup_by_key(|x| x.play_id);
+        events.dedup_by_key(|event| event.play_id);
 
         let metadata = self.inner.playback_history_metadata()
-            .get_all_by_play_id(&xs.iter().map(|x| x.play_id).collect::<Vec<_>>())
+            .get_all_by_play_id(&events.iter().map(|x| x.play_id).collect::<Vec<_>>())
             .await?;
 
         let mut map: HashMap<PlaybackHistoryPlayId, PlaybackHistoryMetadata> = HashMap::new();
@@ -62,7 +63,7 @@ impl Handle {
             map.insert(entry.play_id, entry);
         }
 
-        xs.into_iter()
+        events.into_iter()
             .filter_map(|x| {
                 let play_id = x.play_id;
 
