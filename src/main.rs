@@ -30,6 +30,7 @@ mod tracing;
 mod persist;
 mod history;
 mod convert;
+mod labels;
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), String> {
@@ -50,6 +51,7 @@ async fn main() -> Result<(), String> {
 
     handle.set_level(config.logging.level)?;
 
+    let labels_handle = labels::Handle::new(persistence_handle.clone());
     let history_handle = history::Handle::new(persistence_handle.clone());
 
     let handle = mpd::Handle::new(move || {
@@ -89,8 +91,11 @@ async fn main() -> Result<(), String> {
         .route("/playlists/:name", get(route::playlists::playlist).delete(route::playlists::delete))
         .route("/playlists/:name/songs", delete(route::playlists::delete_songs))
         .route("/history", get(route::history::history))
+        .route("/labels", get(route::labels::labels).post(route::labels::create))
+        .route("/labels/:id", delete(route::labels::delete))
         .layer(Extension(handle))
         .layer(Extension(sub_handle))
+        .layer(Extension(labels_handle))
         .layer(Extension(history_handle));
 
     let app = Router::new()

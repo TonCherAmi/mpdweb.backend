@@ -1,4 +1,5 @@
 use sqlx::FromRow;
+use sqlx::query;
 use sqlx::pool::PoolConnection;
 use sqlx::query_as;
 use sqlx::QueryBuilder;
@@ -13,6 +14,8 @@ use crate::persist::result::Result;
 pub struct IdRow<T> {
     pub id: T,
 }
+
+// <editor-fold desc="Playback History Event">
 
 pub struct PlaybackHistoryEventRepository<'c> {
     inner: &'c mut SqliteConnection,
@@ -35,7 +38,6 @@ pub type PlaybackHistoryEventId = i64;
 
 #[derive(FromRow)]
 pub struct PlaybackHistoryEventRow {
-    pub id: PlaybackHistoryEventId,
     pub play_id: PlaybackHistoryPlayId,
     pub elapsed: f64,
     pub kind: PlaybackHistoryEventKind,
@@ -52,7 +54,7 @@ pub struct CreatePlaybackHistoryEventRow {
 impl<'c> PlaybackHistoryEventRepository<'c> {
     pub async fn get_by_id(&mut self, id: PlaybackHistoryEventId) -> Result<PlaybackHistoryEventRow> {
         let sql = /* language=sql */ r#"
-            SELECT "id", "play_id", "elapsed", "kind", "recorded_at"
+            SELECT "play_id", "elapsed", "kind", "recorded_at"
             FROM "playback_history_events"
             WHERE "id" = ?
         "#;
@@ -66,7 +68,7 @@ impl<'c> PlaybackHistoryEventRepository<'c> {
 
     pub async fn get_latest(&mut self) -> Result<Option<PlaybackHistoryEventRow>> {
         let sql = /* language=sql */ r#"
-            SELECT "id", "play_id", "elapsed", "kind", "recorded_at"
+            SELECT "play_id", "elapsed", "kind", "recorded_at"
             FROM "playback_history_events"
             ORDER BY "recorded_at" DESC
             LIMIT 1
@@ -80,7 +82,7 @@ impl<'c> PlaybackHistoryEventRepository<'c> {
 
     pub async fn get_all(&mut self, from: Option<&str>, to: Option<&str>) -> Result<Vec<PlaybackHistoryEventRow>> {
         let sql = /* language=sql */ r#"
-            SELECT "id", "play_id", "elapsed", "kind", "recorded_at"
+            SELECT "play_id", "elapsed", "kind", "recorded_at"
             FROM "playback_history_events"
             WHERE (?1 IS NULL OR "recorded_at" >= ?1)
               AND (?2 IS NULL OR "recorded_at" < ?2)
@@ -101,7 +103,7 @@ impl<'c> PlaybackHistoryEventRepository<'c> {
         }
 
         let mut builder = QueryBuilder::new(r#"
-            SELECT "id", "play_id", "elapsed", "kind", "recorded_at"
+            SELECT "play_id", "elapsed", "kind", "recorded_at"
             FROM "playback_history_events"
             WHERE "id" IN (
         "#);
@@ -164,13 +166,16 @@ impl<'c> PlaybackHistoryEventRepository<'c> {
     }
 }
 
+// </editor-fold>
+
+// <editor-fold desc="Playback History Metadata">
+
 pub struct PlaybackHistoryMetadataRepository<'c> {
     inner: &'c mut SqliteConnection,
 }
 
 #[derive(FromRow)]
 pub struct PlaybackHistoryMetadataRow {
-    pub id: i64,
     pub play_id: PlaybackHistoryPlayId,
     pub key: String,
     pub value: String,
@@ -208,7 +213,7 @@ impl<'c> PlaybackHistoryMetadataRepository<'c> {
 
     pub async fn get_by_play_id(&mut self, play_id: PlaybackHistoryPlayId) -> Result<Vec<PlaybackHistoryMetadataRow>> {
         let sql = /* language=sql */ r#"
-            SELECT "id", "play_id", "key", "value"
+            SELECT "play_id", "key", "value"
             FROM "playback_history_metadata"
             WHERE "play_id" = ?
         "#;
@@ -222,7 +227,7 @@ impl<'c> PlaybackHistoryMetadataRepository<'c> {
 
     pub async fn get_all_by_play_id(&mut self, play_ids: &[PlaybackHistoryPlayId]) -> Result<Vec<PlaybackHistoryMetadataRow>> {
         let mut builder = QueryBuilder::new(r#"
-            SELECT "id", "play_id", "key", "value"
+            SELECT "play_id", "key", "value"
             FROM "playback_history_metadata"
             WHERE "play_id" IN (
         "#);
@@ -244,6 +249,98 @@ impl<'c> PlaybackHistoryMetadataRepository<'c> {
     }
 }
 
+// </editor-fold>
+
+// <editor-fold desc="Db Item Label">
+
+pub struct DbItemLabelRepository<'c> {
+    inner: &'c mut SqliteConnection,
+}
+
+pub type DbItemLabelId = i64;
+
+#[derive(FromRow)]
+pub struct DbItemLabelRow {
+    pub id: DbItemLabelId,
+    pub uri: String,
+    pub scope: String,
+    pub key: String,
+    pub value: String,
+    pub created_at: String,
+}
+
+#[derive(Clone)]
+pub struct CreateDbItemLabelRow {
+    pub uri: String,
+    pub scope: String,
+    pub key: String,
+    pub value: String,
+    pub created_at: String,
+}
+
+impl<'c> DbItemLabelRepository<'c> {
+    pub async fn create(&mut self, create: CreateDbItemLabelRow) -> Result<IdRow<DbItemLabelId>> {
+        let sql = /* language=sql */ r#"
+            INSERT INTO "database_labels" ("uri", "scope", "key", "value", "created_at")
+            VALUES
+            (?, ?, ?, ?, ?)
+            RETURNING "id"
+        "#;
+
+        query_as(sql)
+            .bind(create.uri)
+            .bind(create.scope)
+            .bind(create.key)
+            .bind(create.value)
+            .bind(create.created_at)
+            .fetch_one(&mut *self.inner)
+            .await
+            .map_err(Into::into)
+    }
+
+    pub async fn get_by_id(&mut self, id: DbItemLabelId) -> Result<DbItemLabelRow> {
+        let sql = /* language=sql */ r#"
+            SELECT "id", "uri", "scope", "key", "value", "created_at"
+            FROM "database_labels"
+            WHERE "id" = ?
+        "#;
+
+        query_as(sql)
+            .bind(id)
+            .fetch_one(&mut *self.inner)
+            .await
+            .map_err(Into::into)
+    }
+
+    pub async fn get_all(&mut self) -> Result<Vec<DbItemLabelRow>> {
+        let sql = /* language=sql */ r#"
+            SELECT "id", "uri", "scope", "key", "value", "created_at"
+            FROM "database_labels"
+        "#;
+
+        query_as(sql)
+            .fetch_all(&mut *self.inner)
+            .await
+            .map_err(Into::into)
+    }
+
+    pub async fn delete_by_id(&mut self, id: DbItemLabelId) -> Result<()> {
+        let sql = /* language=sql */ r#"
+            DELETE FROM "database_labels"
+            WHERE "id" = ?
+        "#;
+
+        query(sql)
+            .bind(id)
+            .execute(&mut *self.inner)
+            .await
+            .map(|_| ())
+            .map_err(Into::into)
+    }
+}
+
+// </editor-fold>
+
 macro_rules! impl_repository {
     ($name:ident) => {
         impl $name {
@@ -253,6 +350,10 @@ macro_rules! impl_repository {
 
             pub fn playback_history_metadata(&mut self) -> PlaybackHistoryMetadataRepository {
                 PlaybackHistoryMetadataRepository { inner: &mut self.inner }
+            }
+
+            pub fn db_item_label(&mut self) -> DbItemLabelRepository {
+                DbItemLabelRepository { inner: &mut self.inner }
             }
         }
     }

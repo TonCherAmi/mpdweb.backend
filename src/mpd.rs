@@ -12,7 +12,6 @@ pub use data::QueueItem;
 pub use data::QueueStatus;
 pub use data::SongStatus;
 pub use data::Status;
-pub use data::Subsystem;
 pub use error::Error;
 pub use handle::Handle;
 pub use result::Result;

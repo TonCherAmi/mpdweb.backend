@@ -7,7 +7,6 @@ use sqlx::migrate::Migrator;
 use sqlx::sqlite::SqliteConnectOptions;
 use sqlx::sqlite::SqliteJournalMode;
 use sqlx::SqlitePool;
-use sqlx::Type;
 use time::Duration;
 use time::format_description::well_known::Iso8601;
 use time::OffsetDateTime;
@@ -15,6 +14,9 @@ use tracing::log::LevelFilter;
 
 use crate::convert::IntoResult;
 use crate::mpd::DbTags;
+use crate::persist::repo::CreateDbItemLabelRow;
+use crate::persist::repo::DbItemLabelId;
+use crate::persist::repo::DbItemLabelRow;
 use crate::persist::repo::CreatePlaybackHistoryEventRow;
 use crate::persist::repo::CreatePlaybackHistoryMetadataRow;
 use crate::persist::repo::IdRow;
@@ -30,12 +32,7 @@ mod repo;
 mod error;
 mod result;
 
-#[derive(Type, Debug)]
-#[sqlx(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum EventKind {
-    Start,
-    Interrupt,
-}
+// <editor-fold desc="Playback History Event">
 
 pub struct PlaybackHistoryEventHandle<'a> {
     inner: &'a Handle,
@@ -155,6 +152,10 @@ impl<'a> PlaybackHistoryEventHandle<'a> {
         Ok(result)
     }
 }
+
+// </editor-fold>
+
+// <editor-fold desc="Playback History Metadata">
 
 pub struct PlaybackHistoryMetadataHandle<'a> {
     inner: &'a Handle,
@@ -304,6 +305,108 @@ impl<'a> PlaybackHistoryMetadataHandle<'a> {
     }
 }
 
+// </editor-fold>
+
+// <editor-fold desc="Db Item Label">
+
+pub struct DbItemLabelHandle<'a> {
+    inner: &'a Handle,
+}
+
+pub struct CreateDbItemLabel {
+    pub uri: String,
+    pub scope: String,
+    pub key: String,
+    pub value: String,
+}
+
+#[derive(Debug)]
+pub struct DbItemLabel {
+    pub id: DbItemLabelId,
+    pub uri: String,
+    pub scope: String,
+    pub key: String,
+    pub value: String,
+    pub created_at: OffsetDateTime,
+}
+
+impl TryFrom<CreateDbItemLabel> for CreateDbItemLabelRow {
+    type Error = String;
+
+    fn try_from(create: CreateDbItemLabel) -> std::result::Result<Self, Self::Error> {
+        CreateDbItemLabelRow {
+            uri: create.uri,
+            scope: create.scope,
+            key: create.key,
+            value: create.value,
+            created_at: format_iso8601(OffsetDateTime::now_utc())
+                .map_err(|err| format!("failed to format created_at timestamp: {err}"))?,
+        }.into_ok()
+    }
+}
+
+impl TryFrom<DbItemLabelRow> for DbItemLabel {
+    type Error = String;
+
+    fn try_from(row: DbItemLabelRow) -> std::result::Result<Self, Self::Error> {
+        DbItemLabel {
+            id: row.id,
+            uri: row.uri,
+            scope: row.scope,
+            key: row.key,
+            value: row.value,
+            created_at: OffsetDateTime::parse(&row.created_at, &Iso8601::DEFAULT)
+                .map_err(|err| format!("failed to parse created_at timestamp: {err}"))?,
+        }.into_ok()
+    }
+}
+
+impl<'a> DbItemLabelHandle<'a> {
+    pub async fn create(&mut self, create: CreateDbItemLabel) -> Result<DbItemLabel> {
+        let mut repo = self.inner.pool.begin().await?;
+
+        let IdRow { id } = repo.db_item_label()
+            .create(create.try_into()?)
+            .await?;
+
+        let result = repo.db_item_label()
+            .get_by_id(id)
+            .await?
+            .try_into()?;
+
+        repo.commit().await?;
+
+        Ok(result)
+    }
+
+    pub async fn get_all(&mut self) -> Result<Vec<DbItemLabel>> {
+        let mut repo = self.inner.pool.acquire().await?;
+
+        let result = repo.db_item_label()
+            .get_all()
+            .await?
+            .into_iter()
+            .map(TryInto::try_into)
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+
+        Ok(result)
+    }
+
+    pub async fn delete_by_id(&mut self, id: DbItemLabelId) -> Result<()> {
+        let mut repo = self.inner.pool.begin().await?;
+
+        repo.db_item_label()
+            .delete_by_id(id)
+            .await?;
+
+        repo.commit().await?;
+
+        Ok(())
+    }
+}
+
+// </editor-fold>
+
 #[derive(Clone)]
 pub struct Handle {
     pool: Pool,
@@ -337,5 +440,9 @@ impl Handle {
 
     pub fn playback_history_metadata(&self) -> PlaybackHistoryMetadataHandle {
         PlaybackHistoryMetadataHandle { inner: self }
+    }
+
+    pub fn db_item_label(&self) -> DbItemLabelHandle {
+        DbItemLabelHandle { inner: self }
     }
 }

@@ -40,6 +40,27 @@ Content-Type: application/json
 GET {{server}}/api/history?from=2023-05-13T09:30:00-05:00
 
 ###
+# @name Get labels.
+GET {{server}}/api/labels
+
+###
+# @name Create label.
+POST {{server}}/api/labels
+Content-Type: application/json
+
+{
+
+  "uri": "dance",
+  "scope": "internal",
+  "key": "favorite",
+  "value": "true"
+}
+
+###
+# @name Delete label.
+DELETE {{server}}/api/labels/1
+
+###
 # @name WebSocket endpoint.
 WEBSOCKET ws://{{server}}/ws
 Content-Type: application/json

@@ -26,7 +26,7 @@ pub struct HistoryEntry {
     pub id: i64,
     pub uri: String,
     pub tags: DbTags,
-    pub duration: Duration,
+    pub _duration: Duration,
     pub recorded_at: OffsetDateTime,
 }
 
@@ -36,7 +36,7 @@ impl From<(PlaybackHistoryEvent, PlaybackHistoryMetadata)> for HistoryEntry {
             id: event.play_id,
             uri: metadata.uri,
             tags: metadata.tags,
-            duration: metadata.duration,
+            _duration: metadata.duration,
             recorded_at: event.recorded_at,
         }
     }

@@ -300,7 +300,7 @@ pub async fn connect<T: ToSocketAddrs>(addr: T) -> result::Result<Client, Connec
 
     let mut connection = Connection::new(stream);
 
-    let Frame::Ver(_) = connection.read_frame().await? else {
+    let Frame::Ver(_version) = connection.read_frame().await? else {
         return Err(ConnectError { message: "unexpected frame".to_owned() });
     };
 
@@ -399,7 +399,7 @@ impl Client {
 
         match response {
             Frame::Ok(bytes) => Ok(de::from_bytes(&bytes)?),
-            Frame::Ver(_) => panic!("unexpected version frame"),
+            Frame::Ver(_version) => panic!("unexpected version frame"),
             Frame::Ack(bytes) => Err(Error::Ack(bytes.try_into()?)),
         }
     }
